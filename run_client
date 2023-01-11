@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_351.jdk/Contents/Home
+open ~/BattleCode2023/postmodern/client/"BattleCode Client.app"
