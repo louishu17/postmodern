@@ -16,20 +16,23 @@ public abstract class Robot {
 
     static RobotController rc;
     static BFS bfs;
+    static Explore explore;
+    static Communication comm;
 
 
     public Robot(RobotController rc){
         this.rc = rc;
         bfs = new BFS(rc);
-
+        explore = new Explore(rc);
+        comm = new Communication(rc);
     }
 
     abstract void play();
     void initTurn(){
-        return;
     }
     void endTurn(){
-        return;
+        explore.reportResourcesAndIslands();
+        explore.reportUnits();
     }
 
     void moveRandom(){

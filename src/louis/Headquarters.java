@@ -18,11 +18,30 @@ public class Headquarters extends Robot{
             Direction.WEST,
             Direction.NORTHWEST,
     };
+
+    int carrierScore = 0;
+    int launcherScore = 0;
+
     Headquarters(RobotController rc){
         super(rc);
     }
     void play(){
+        if(carrierScore <= launcherScore){
+            if(constructRobot(RobotType.CARRIER)) updateCarrierScore();
+        }
+        else if(constructRobot(RobotType.LAUNCHER)) updateLauncherScore();
+
         constructRobot(RobotType.CARRIER);
+    }
+
+    void updateCarrierScore(){
+        if(rc.getRoundNum() < 100) carrierScore += 1;
+        else if(rc.getRoundNum() < 300) carrierScore += 2;
+        else carrierScore += 5;
+    }
+
+    void updateLauncherScore(){
+        launcherScore += 2;
     }
 
     boolean constructRobot(RobotType t){

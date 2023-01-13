@@ -7,6 +7,6 @@ public class Launcher extends Robot{
         super(rc);
     }
     void play(){
-
+        moveRandom();
     }
 }
