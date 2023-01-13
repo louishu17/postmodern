@@ -23,6 +23,9 @@ public class Explore {
     MapLocation closestEnemyHeadquarters = null;
     int distEnemyHeadquarters = 0;
 
+    MapLocation closestMyHeadquarters = null;
+    int distMyHeadquarters = 0;
+
     static int BYTECODE_EXPLORE_RESOURCE_LIMIT;
 
     Explore(RobotController rc){
@@ -130,6 +133,10 @@ public class Explore {
         return exploreLoc;
     }
 
+    MapLocation getClosestMyHeadquarters(){
+        return closestMyHeadquarters;
+    }
+
     void reportUnits(){
         closestEnemyHeadquarters = null;
         try{
@@ -142,8 +149,20 @@ public class Explore {
                     closestEnemyHeadquarters = enemy.getLocation();
                 }
             }
+
+            RobotInfo[] allies = rc.senseNearbyRobots(myVisionRange, rc.getTeam());
+            for(RobotInfo ally: allies){
+                if(ally.getType() != RobotType.HEADQUARTERS) continue;
+                int d = ally.getLocation().distanceSquaredTo(rc.getLocation());
+                if(closestMyHeadquarters == null || d < distMyHeadquarters){
+                    distMyHeadquarters = d;
+                    closestMyHeadquarters = ally.getLocation();
+                }
+            }
+
         } catch(Exception e){
             e.printStackTrace();
         }
     }
+
 }
