@@ -29,6 +29,7 @@ public abstract class Robot {
 
     abstract void play();
     void initTurn(){
+        comm.reportSelf();
     }
     void endTurn(){
         explore.reportResourcesAndIslands();
