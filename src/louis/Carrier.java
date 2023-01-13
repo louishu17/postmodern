@@ -5,8 +5,12 @@ import battlecode.common.MapLocation;
 import battlecode.common.RobotController;
 
 public class Carrier extends Robot{
+
+    int actionRadius;
+    boolean shouldMove = true;
     Carrier(RobotController rc){
         super(rc);
+        actionRadius = rc.getType().actionRadiusSquared;
     }
     void play(){
         tryCollectResource();
@@ -23,6 +27,7 @@ public class Carrier extends Robot{
     }
 
     MapLocation getTarget(){
+        if(!shouldMove) return rc.getLocation();
         MapLocation loc = getClosestAdamantium();
         if (loc == null) return explore.getExploreTarget();
         if (loc != null){

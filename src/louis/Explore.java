@@ -6,27 +6,38 @@ public class Explore {
     RobotController rc;
 
     boolean compareWells;
-    boolean visibleIsland;
     int myVisionRange;
     boolean visibleAdamantium;
-    MapLocation closestAdamantium;
-    int distAdamantium;
+    MapLocation closestAdamantium = null;
+    int distAdamantium = 0;
 
     boolean visibleMana;
-    MapLocation closestMana;
-    int distMana;
+    MapLocation closestMana = null;
+    int distMana = 0;
 
-    boolean compareIslands;
-    MapLocation closestIsland;
-    int distIsland;
+    boolean compareIslands = false;
+    boolean visibleIsland;
+    MapLocation closestIsland = null;
+    int distIsland = 0;
+    MapLocation exploreLoc = null;
+    MapLocation closestEnemyHeadquarters = null;
+    int distEnemyHeadquarters = 0;
 
-    static final int BYTECODE_EXPLORE_RESOURCE_LIMIT = 4000;
+    static int BYTECODE_EXPLORE_RESOURCE_LIMIT;
 
     Explore(RobotController rc){
         this.rc = rc;
         myVisionRange = rc.getType().visionRadiusSquared;
         if (rc.getType() == RobotType.CARRIER){
             compareWells = true;
+        }
+        switch(rc.getType()){
+            case CARRIER:
+                BYTECODE_EXPLORE_RESOURCE_LIMIT = 2000;
+                break;
+            default:
+                BYTECODE_EXPLORE_RESOURCE_LIMIT = 3000;
+                break;
         }
     }
 
@@ -100,11 +111,39 @@ public class Explore {
         return closestIsland;
     }
 
+    void getRandomTarget(int tries){
+        MapLocation myLoc = rc.getLocation();
+        int maxX = rc.getMapWidth();
+        int maxY = rc.getMapHeight();
+        while(tries-- > 0){
+            if(exploreLoc != null) return;
+            MapLocation newLoc = new MapLocation((int)(Math.random() * maxX), (int) (Math.random()*maxY));
+            if(myLoc.distanceSquaredTo(newLoc) > myVisionRange){
+                exploreLoc = newLoc;
+            }
+        }
+    }
+
     MapLocation getExploreTarget(){
-        return null;
+        if (exploreLoc != null && rc.getLocation().distanceSquaredTo(exploreLoc) <= myVisionRange) exploreLoc = null;
+        if(exploreLoc == null) getRandomTarget(15);
+        return exploreLoc;
     }
 
     void reportUnits(){
-
+        closestEnemyHeadquarters = null;
+        try{
+            RobotInfo[] enemies = rc.senseNearbyRobots(myVisionRange, rc.getTeam().opponent());
+            for(RobotInfo enemy: enemies){
+                if(enemy.getType() != RobotType.HEADQUARTERS) continue;
+                int d = enemy.getLocation().distanceSquaredTo(rc.getLocation());
+                if(closestEnemyHeadquarters == null || d < distEnemyHeadquarters){
+                    distEnemyHeadquarters = d;
+                    closestEnemyHeadquarters = enemy.getLocation();
+                }
+            }
+        } catch(Exception e){
+            e.printStackTrace();
+        }
     }
 }
