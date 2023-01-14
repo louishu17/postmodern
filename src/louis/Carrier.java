@@ -9,9 +9,12 @@ public class Carrier extends Robot{
 
     ResourceType[] resourceTypes = {ResourceType.ADAMANTIUM, ResourceType.MANA};
 
+    int myID;
+
     Carrier(RobotController rc){
         super(rc);
         actionRadius = rc.getType().actionRadiusSquared;
+        myID = rc.getID();
     }
     void play(){
         tryCollectAnchor();
@@ -51,8 +54,14 @@ public class Carrier extends Robot{
                 }
                 if(totalResources == 0)
                 {
-                    loc = explore.getClosestAdamantium();
-                    if (loc == null) loc = explore.getClosestMana();
+                    if(myID % 2 == 0){
+                        loc = explore.getClosestAdamantium();
+                        if (loc == null) loc = explore.getClosestMana();
+                    }
+                    else{
+                        loc = explore.getClosestMana();
+                        if (loc == null) loc = explore.getClosestAdamantium();
+                    }
                     if (loc == null) loc = explore.getClosestEnemyOccupiedIsland();
                     if (loc == null) return explore.getExploreTarget();
                     if (loc != null){
