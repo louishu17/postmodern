@@ -15,10 +15,17 @@ public class Explore {
     MapLocation closestMana = null;
     int distMana = 0;
 
-    boolean compareIslands = false;
-    boolean visibleIsland;
-    MapLocation closestIsland = null;
-    int distIsland = 0;
+    boolean compareFreeIslands = false;
+    boolean visibleFreeIsland;
+    MapLocation closestFreeIsland = null;
+    int distFreeIsland = 0;
+
+    boolean compareEnemyOccupiedIslands = false;
+    boolean visibleEnemyOccupiedIsland;
+    MapLocation closestEnemyOccupiedIsland = null;
+    int distEnemyOccupiedIsland = 0;
+
+
     MapLocation exploreLoc = null;
     MapLocation closestEnemyHeadquarters = null;
     int distEnemyHeadquarters = 0;
@@ -33,6 +40,8 @@ public class Explore {
         myVisionRange = rc.getType().visionRadiusSquared;
         if (rc.getType() == RobotType.CARRIER){
             compareWells = true;
+            compareFreeIslands = true;
+            compareEnemyOccupiedIslands = true;
         }
         switch(rc.getType()){
             case CARRIER:
@@ -44,24 +53,20 @@ public class Explore {
         }
     }
 
-    void reportResourcesAndIslands(){
+    void reportResources(){
         try{
             visibleAdamantium = false;
             visibleMana = false;
-            visibleIsland = false;
             closestAdamantium = null;
             closestMana = null;
-            closestIsland = null;
             distAdamantium = 0;
             distMana = 0;
-            distIsland = 0;
 
             MapLocation myLoc = rc.getLocation();
             MapLocation[] mapLocs = rc.getAllLocationsWithinRadiusSquared(myLoc, myVisionRange);
             for(int i = 0; i < mapLocs.length; i++){
                 if(Clock.getBytecodeNum() > BYTECODE_EXPLORE_RESOURCE_LIMIT) break;
                 WellInfo well = rc.senseWell(mapLocs[i]);
-                int island = rc.senseIsland(mapLocs[i]);
                 if (well != null){
                     if(well.getResourceType() == ResourceType.ADAMANTIUM){
                         visibleAdamantium = true;
@@ -83,20 +88,44 @@ public class Explore {
                         }
                     }
                 }
-                if(island != -1){
-                    visibleIsland = true;
-                    if(compareIslands){
-                        int d = mapLocs[i].distanceSquaredTo(myLoc);
-                        if(closestIsland == null || d < distIsland){
-                            closestIsland = mapLocs[i];
-                            distIsland = d;
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    void reportIslands(){
+        try{
+            visibleFreeIsland = false;
+            visibleEnemyOccupiedIsland = false;
+            closestFreeIsland = null;
+            closestEnemyOccupiedIsland = null;
+            distFreeIsland = 0;
+            distEnemyOccupiedIsland = 0;
+
+            MapLocation myLoc = rc.getLocation();
+            int[] ids = rc.senseNearbyIslands();
+            for(int id: ids){
+                if(Clock.getBytecodeNum() > BYTECODE_EXPLORE_RESOURCE_LIMIT) break;
+                if(rc.senseTeamOccupyingIsland(id) == Team.NEUTRAL){
+                    visibleFreeIsland = true;
+                    if(compareFreeIslands){
+                        MapLocation[] islandLocs = rc.senseNearbyIslandLocations(id);
+                        if(islandLocs.length > 0){
+                            closestFreeIsland = islandLocs[0];
                         }
                     }
-
+                }else if(rc.senseTeamOccupyingIsland(id) == rc.getTeam().opponent()){
+                    visibleEnemyOccupiedIsland = true;
+                    if(compareEnemyOccupiedIslands){
+                        MapLocation[] islandLocs = rc.senseNearbyIslandLocations(id);
+                        if(islandLocs.length > 0){
+                            closestEnemyOccupiedIsland = islandLocs[0];
+                        }
+                    }
                 }
+
             }
-
-
         }catch(Exception e){
             e.printStackTrace();
         }
@@ -110,8 +139,12 @@ public class Explore {
         return closestMana;
     }
 
-    MapLocation getClosestIsland(){
-        return closestIsland;
+    MapLocation getClosestFreeIsland(){
+        return closestFreeIsland;
+    }
+
+    MapLocation getClosestEnemyOccupiedIsland(){
+        return closestEnemyOccupiedIsland;
     }
 
     void getRandomTarget(int tries){

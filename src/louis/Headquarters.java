@@ -2,10 +2,7 @@ package louis;
 
 import battlecode.common.*;
 
-import java.util.Random;
-
 public class Headquarters extends Robot{
-    static final Random rng = new Random(6147);
 
     /** Array containing all the possible movement directions. */
     static final Direction[] directions = {
@@ -27,14 +24,24 @@ public class Headquarters extends Robot{
         super(rc);
     }
     void play(){
-        if(carrierScore <= launcherScore){
-            if(constructRobot(RobotType.CARRIER)) updateCarrierScore();
-        } else if(amplifierScore <= launcherScore){
-            if(constructRobot(RobotType.AMPLIFIER)) updateAmplifierScore();
+        while(true){
+            if(carrierScore <= launcherScore){
+                if(constructRobot(RobotType.CARRIER)){
+                    updateCarrierScore();
+                    continue;
+                }
+            } else if(amplifierScore <= launcherScore){
+                if(constructRobot(RobotType.AMPLIFIER)){
+                    updateAmplifierScore();
+                    continue;
+                }
+            }
+            else if(constructRobot(RobotType.LAUNCHER)){
+                updateLauncherScore();
+                continue;
+            }
+            break;
         }
-        else if(constructRobot(RobotType.LAUNCHER)) updateLauncherScore();
-
-        constructRobot(RobotType.CARRIER);
     }
 
     void updateCarrierScore(){
@@ -47,7 +54,9 @@ public class Headquarters extends Robot{
         launcherScore += 2;
     }
     void updateAmplifierScore(){
-        amplifierScore += 10;
+        if(rc.getRoundNum() < 100) amplifierScore += 2;
+        else if(rc.getRoundNum() < 300) amplifierScore += 4;
+        else carrierScore += 10;
     }
 
     boolean constructRobot(RobotType t){

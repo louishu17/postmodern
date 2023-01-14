@@ -14,9 +14,13 @@ public class Carrier extends Robot{
         actionRadius = rc.getType().actionRadiusSquared;
     }
     void play(){
+        tryCollectAnchor();
+        tryDepositAnchor();
         tryCollectResource();
         tryDepositResource();
         moveToTarget();
+        tryCollectAnchor();
+        tryDepositAnchor();
         tryCollectResource();
         tryDepositResource();
     }
@@ -25,7 +29,7 @@ public class Carrier extends Robot{
         if(!rc.isMovementReady()) return;
         rc.setIndicatorString("Trying to move");
         MapLocation loc = getTarget();
-//        if (loc != null) rc.setIndicatorString("Target not null!: " + loc.toString());
+        if (loc != null) rc.setIndicatorString("Target not null!: " + loc.toString());
         bfs.move(loc);
     }
 
@@ -33,26 +37,64 @@ public class Carrier extends Robot{
         if(!shouldMove) return rc.getLocation();
         int totalResources = getTotalResources();
         MapLocation loc = null;
-
-        if(totalResources == GameConstants.CARRIER_CAPACITY){
-            loc = explore.getClosestMyHeadquarters();
-        }
-        if(totalResources == 0)
-        {
-            loc = getClosestAdamantium();
-            if (loc == null) return explore.getExploreTarget();
-            if (loc != null){
-                rc.setIndicatorString("Going to " + loc.toString());
-                rc.setIndicatorDot(loc,100,100,100);
+        try{
+            if(rc.getAnchor() != null){
+                loc = explore.getClosestFreeIsland();
+                if(loc == null) return explore.getExploreTarget();
+                if (loc != null){
+                    rc.setIndicatorString("Going to " + loc.toString());
+                    rc.setIndicatorDot(loc,100,100,100);
+                }
+            }else{
+                if(totalResources == GameConstants.CARRIER_CAPACITY){
+                    loc = explore.getClosestMyHeadquarters();
+                }
+                if(totalResources == 0)
+                {
+                    loc = explore.getClosestAdamantium();
+                    if (loc == null) loc = explore.getClosestMana();
+                    if (loc == null) loc = explore.getClosestEnemyOccupiedIsland();
+                    if (loc == null) return explore.getExploreTarget();
+                    if (loc != null){
+                        rc.setIndicatorString("Going to " + loc.toString());
+                        rc.setIndicatorDot(loc,100,100,100);
+                    }
+                }
             }
+        }
+        catch(Exception e){
+            e.printStackTrace();
         }
 
         return loc;
     }
 
-    MapLocation getClosestAdamantium(){
-        MapLocation ans = explore.getClosestAdamantium();
-        return ans;
+    void tryCollectAnchor(){
+        if(!rc.isActionReady()) return;
+        try{
+            if(rc.getAnchor() != null) return;
+            for(Direction d: directions){
+                MapLocation newLoc = rc.getLocation().add(d);
+                if(!rc.onTheMap(newLoc)) continue;
+                if(rc.canTakeAnchor(newLoc,Anchor.STANDARD)){
+                    rc.takeAnchor(newLoc,Anchor.STANDARD);
+                    return;
+                }
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    void tryDepositAnchor(){
+        if(!rc.isActionReady()) return;
+        try{
+            if(rc.getAnchor() == null) return;
+            if(rc.canPlaceAnchor()) rc.placeAnchor();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
     }
 
     void tryCollectResource(){
@@ -75,10 +117,16 @@ public class Carrier extends Robot{
     void tryDepositResource(){
         if(!rc.isActionReady()) return;
         try{
-            for (ResourceType r: resourceTypes){
-                int amount = rc.getResourceAmount(r);
-                if(amount > 0 && rc.canTransferResource(explore.getClosestMyHeadquarters(),r,amount)){
-                    rc.transferResource(explore.getClosestMyHeadquarters(),r,amount);
+            for(ResourceType r: resourceTypes){
+                for(Direction d: directions){
+                    int amount = rc.getResourceAmount(r);
+                    if(amount == 0) continue;
+                    MapLocation newLoc = rc.getLocation().add(d);
+                    if(!rc.onTheMap(newLoc)) continue;
+                    if(rc.canTransferResource(newLoc,r,amount)){
+                        rc.transferResource(newLoc,r, amount);
+                        break;
+                    }
                 }
             }
         }catch(Exception e){

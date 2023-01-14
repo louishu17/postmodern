@@ -30,7 +30,7 @@ public strictfp class RobotPlayer {
      *            information on its current status. Essentially your portal to interacting with the world.
      **/
     @SuppressWarnings("unused")
-    public static void run(RobotController rc) throws GameActionException {
+    public static void run(RobotController rc){
         Robot robot;
         switch(rc.getType()){
             case HEADQUARTERS:

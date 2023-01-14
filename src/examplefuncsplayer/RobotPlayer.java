@@ -51,7 +51,7 @@ public strictfp class RobotPlayer {
      *            information on its current status. Essentially your portal to interacting with the world.
      **/
     @SuppressWarnings("unused")
-    public static void run(RobotController rc) throws GameActionException {
+    public static void run(RobotController rc){
 
         // Hello world! Standard output is very useful for debugging.
         // Everything you say here will be directly viewable in your terminal when you run a match!

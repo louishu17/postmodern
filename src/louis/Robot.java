@@ -32,7 +32,8 @@ public abstract class Robot {
         comm.reportSelf();
     }
     void endTurn(){
-        explore.reportResourcesAndIslands();
+        explore.reportResources();
+        explore.reportIslands();
         explore.reportUnits();
     }
 
