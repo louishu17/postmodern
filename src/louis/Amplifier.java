@@ -7,6 +7,6 @@ public class Amplifier extends Robot{
         super(rc);
     }
     void play(){
-
+        moveRandom();
     }
 }

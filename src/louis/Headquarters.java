@@ -21,6 +21,7 @@ public class Headquarters extends Robot{
 
     int carrierScore = 0;
     int launcherScore = 0;
+    int amplifierScore = 0;
 
     Headquarters(RobotController rc){
         super(rc);
@@ -28,6 +29,8 @@ public class Headquarters extends Robot{
     void play(){
         if(carrierScore <= launcherScore){
             if(constructRobot(RobotType.CARRIER)) updateCarrierScore();
+        } else if(amplifierScore <= launcherScore){
+            if(constructRobot(RobotType.AMPLIFIER)) updateAmplifierScore();
         }
         else if(constructRobot(RobotType.LAUNCHER)) updateLauncherScore();
 
@@ -42,6 +45,9 @@ public class Headquarters extends Robot{
 
     void updateLauncherScore(){
         launcherScore += 2;
+    }
+    void updateAmplifierScore(){
+        amplifierScore += 10;
     }
 
     boolean constructRobot(RobotType t){
