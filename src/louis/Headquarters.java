@@ -60,7 +60,7 @@ public class Headquarters extends Robot{
     }
 
     boolean constructRobot(RobotType t){
-        System.out.println("Building " + t.name());
+//        System.out.println("Building " + t.name());
         try{
             MapLocation myLoc = rc.getLocation();
             MapLocation buildLoc = null;
@@ -70,7 +70,7 @@ public class Headquarters extends Robot{
                     buildLoc = newLoc;
                 }
             }
-            if (buildLoc != null){
+            if (buildLoc != null && rc.canBuildRobot(t,buildLoc)){
                 rc.buildRobot(t, buildLoc);
                 return true;
             }
