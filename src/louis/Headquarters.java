@@ -19,12 +19,15 @@ public class Headquarters extends Robot{
     int carrierScore = 0;
     int launcherScore = 0;
     int amplifierScore = 0;
+    int anchorScore = 5;
 
     Headquarters(RobotController rc){
         super(rc);
     }
     void play(){
         while(true){
+            System.out.println("I have " + rc.getResourceAmount(ResourceType.ADAMANTIUM) +
+                    " Ad  and " + rc.getResourceAmount(ResourceType.MANA) + " Mana");
             if(carrierScore <= launcherScore){
                 if(constructRobot(RobotType.CARRIER)){
                     updateCarrierScore();
@@ -33,6 +36,11 @@ public class Headquarters extends Robot{
             } else if(amplifierScore <= launcherScore){
                 if(constructRobot(RobotType.AMPLIFIER)){
                     updateAmplifierScore();
+                    continue;
+                }
+            } else if (anchorScore <= launcherScore){
+                if (constructAnchor(Anchor.STANDARD)){
+                    updateAnchorScore();
                     continue;
                 }
             }
@@ -56,11 +64,16 @@ public class Headquarters extends Robot{
     void updateAmplifierScore(){
         if(rc.getRoundNum() < 100) amplifierScore += 2;
         else if(rc.getRoundNum() < 300) amplifierScore += 4;
-        else carrierScore += 10;
+        else amplifierScore += 10;
     }
 
+    void updateAnchorScore(){
+        anchorScore += 5;
+    }
+
+
     boolean constructRobot(RobotType t){
-        System.out.println("Building " + t.name());
+        //System.out.println("Building " + t.name());
         try{
             MapLocation myLoc = rc.getLocation();
             MapLocation buildLoc = null;
@@ -78,5 +91,19 @@ public class Headquarters extends Robot{
             e.printStackTrace();
         }
         return false;
+    }
+
+    boolean constructAnchor(Anchor anchor){
+        //System.out.println("Building an anchor");
+        try{
+            if (rc.canBuildAnchor(anchor)){
+                rc.buildAnchor(anchor);
+                return true;
+            }
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+        return false;
+
     }
 }
