@@ -5,11 +5,13 @@ import battlecode.common.*;
 public class Communication {
     RobotController rc;
 
-    boolean needToCom = false;
-
     static final int MAX_HEADQUARTERS = 4;
     static final int HEADQUARTERS_INDEX = 0;
     static final int HEADQUARTERS_NB_INDEX = 14;
+
+    static final int CARRIER_COUNT = 60;
+    static final int LAUNCHER_COUNT = 59;
+
 
     static final int H_SYM = 63;
     static final int V_SYM = 62;
@@ -144,6 +146,16 @@ public class Communication {
             e.printStackTrace();
         }
         return null;
+    }
+
+
+    void increaseIndex(int index, int amount){
+        try {
+            rc.writeSharedArray(index, rc.readSharedArray(index) + amount);
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
 }

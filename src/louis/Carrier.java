@@ -7,6 +7,7 @@ public class Carrier extends Robot{
 
     int actionRadius;
     boolean shouldMove = true;
+    int minerIndex = 0;
 
     ResourceType[] resourceTypes = {ResourceType.ADAMANTIUM, ResourceType.MANA};
 
@@ -16,6 +17,7 @@ public class Carrier extends Robot{
         super(rc);
         actionRadius = rc.getType().actionRadiusSquared;
         myID = rc.getID();
+        checkBehavior();
     }
     void play(){
         tryAttack(true);
@@ -29,6 +31,15 @@ public class Carrier extends Robot{
         tryDepositResource();
         tryCollectAnchor();
         tryDepositAnchor();
+    }
+
+    void checkBehavior(){
+        try {
+            minerIndex = rc.readSharedArray(comm.CARRIER_COUNT);
+            comm.increaseIndex(comm.CARRIER_COUNT, 1);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     void moveToTarget(){
@@ -57,20 +68,32 @@ public class Carrier extends Robot{
                 }
                 if(totalResources == 0)
                 {
-                    if(myID % 2 == 0){
+                    if(minerIndex % 2 == 0){
                         loc = explore.getClosestAdamantium();
+                        if (loc != null){
+                            rc.setIndicatorString("Going to Adamantium well" + loc.toString());
+                            rc.setIndicatorDot(loc,0,0,255);
+                        }
                         if (loc == null) loc = explore.getClosestMana();
+                        if (loc != null){
+                            rc.setIndicatorString("Going to Mana well" + loc.toString());
+                            rc.setIndicatorDot(loc,0,0,255);
+                        }
                     }
                     else{
                         loc = explore.getClosestMana();
+                        if (loc != null){
+                            rc.setIndicatorString("Going to Mana well" + loc.toString());
+                            rc.setIndicatorDot(loc,0,0,255);
+                        }
                         if (loc == null) loc = explore.getClosestAdamantium();
+                        if (loc != null){
+                            rc.setIndicatorString("Going to Adamantium well" + loc.toString());
+                            rc.setIndicatorDot(loc,0,0,255);
+                        }
                     }
 //                    if (loc == null) loc = explore.getClosestEnemyOccupiedIsland();
                     if (loc == null) return explore.getExploreTarget();
-                    if (loc != null){
-                        rc.setIndicatorString("Going to " + loc.toString());
-                        rc.setIndicatorDot(loc,0,0,255);
-                    }
                 }
             }
         }
