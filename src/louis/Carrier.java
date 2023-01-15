@@ -1,6 +1,7 @@
 package louis;
 
 import battlecode.common.*;
+import battlecode.world.Well;
 
 public class Carrier extends Robot{
 
@@ -111,15 +112,20 @@ public class Carrier extends Robot{
     void tryCollectResource(){
         if(!rc.isActionReady()) return;
         try{
-            for(Direction d: directions){
-                MapLocation newLoc = rc.getLocation().add(d);
-                if(!rc.onTheMap(newLoc)) continue;
-                if(rc.canCollectResource(newLoc,-1)){
-                    rc.collectResource(newLoc,-1);
-                    return;
+            WellInfo[] wells = rc.senseNearbyWells(actionRadius);
+            for (WellInfo well: wells){
+                int totalResouces = getTotalResources();
+                MapLocation wellLoc = well.getMapLocation();
+                if(totalResouces == GameConstants.CARRIER_CAPACITY){
+                    break;
+                }
+                while(rc.canCollectResource(wellLoc,-1)){
+                    rc.collectResource(wellLoc, -1);
+                    if(totalResouces == GameConstants.CARRIER_CAPACITY){
+                        break;
+                    }
                 }
             }
-
         }catch(Exception e){
             e.printStackTrace();
         }
