@@ -1,6 +1,7 @@
 package louis;
 
 import battlecode.common.MapLocation;
+import battlecode.common.RobotType;
 
 public class Util {
 
@@ -13,5 +14,13 @@ public class Util {
 
     static MapLocation getLocation(int code){
         return new MapLocation(code >>> 6, code & 63);
+    }
+
+    static boolean isAttacker(RobotType r){
+        switch (r){
+            case LAUNCHER:
+            case DESTABILIZER: return true;
+            default: return false;
+        }
     }
 }

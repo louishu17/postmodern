@@ -26,6 +26,8 @@ public class Micro {
 
         DPS[RobotType.LAUNCHER.ordinal()] = 6;
         DPS[RobotType.DESTABILIZER.ordinal()] = 5;
+        rangeExtended[RobotType.LAUNCHER.ordinal()] = 16;
+        rangeExtended[RobotType.DESTABILIZER.ordinal()] = 13;
         myDPS = DPS[rc.getType().ordinal()];
     }
 
@@ -33,6 +35,8 @@ public class Micro {
     static double currentRangeExtended;
     static double currentActionRadius;
     static boolean canAttack;
+
+    final static double MAX_COOLDOWN_DIFF = 0.2;
 
     boolean doMicro(){
         try{
@@ -46,8 +50,6 @@ public class Micro {
                 RobotInfo r = units[uIndex];
                 switch(r.getType()){
                     case LAUNCHER:
-                        shouldPlaySafe = true;
-                        break;
                     case DESTABILIZER:
                         shouldPlaySafe = true;
                         break;
@@ -55,18 +57,39 @@ public class Micro {
             }
             if (!shouldPlaySafe) return false;
 
-            System.out.println("IM HERE");
-
             alwaysInRange = false;
             if (!attacker || !rc.isActionReady()) alwaysInRange = true;
 
             MicroInfo[] microInfo = new MicroInfo[9];
             for (int i = 0; i < 9; ++i) microInfo[i] = new MicroInfo(dirs[i]);
 
+
+            double minCooldown = microInfo[8].cooldown;
+            if (microInfo[7].canMove && minCooldown > microInfo[7].cooldown) minCooldown = microInfo[7].cooldown;
+            if (microInfo[6].canMove && minCooldown > microInfo[6].cooldown) minCooldown = microInfo[6].cooldown;
+            if (microInfo[5].canMove && minCooldown > microInfo[5].cooldown) minCooldown = microInfo[5].cooldown;
+            if (microInfo[4].canMove && minCooldown > microInfo[4].cooldown) minCooldown = microInfo[4].cooldown;
+            if (microInfo[3].canMove && minCooldown > microInfo[3].cooldown) minCooldown = microInfo[3].cooldown;
+            if (microInfo[2].canMove && minCooldown > microInfo[2].cooldown) minCooldown = microInfo[2].cooldown;
+            if (microInfo[1].canMove && minCooldown > microInfo[1].cooldown) minCooldown = microInfo[1].cooldown;
+            if (microInfo[0].canMove && minCooldown > microInfo[0].cooldown) minCooldown = microInfo[0].cooldown;
+
+            minCooldown += MAX_COOLDOWN_DIFF;
+
+            if (microInfo[8].cooldown > minCooldown) microInfo[8].canMove = false;
+            if (microInfo[7].cooldown > minCooldown) microInfo[7].canMove = false;
+            if (microInfo[6].cooldown > minCooldown) microInfo[6].canMove = false;
+            if (microInfo[5].cooldown > minCooldown) microInfo[5].canMove = false;
+            if (microInfo[4].cooldown > minCooldown) microInfo[4].canMove = false;
+            if (microInfo[3].cooldown > minCooldown) microInfo[3].canMove = false;
+            if (microInfo[2].cooldown > minCooldown) microInfo[2].canMove = false;
+            if (microInfo[1].cooldown > minCooldown) microInfo[1].canMove = false;
+            if (microInfo[0].cooldown > minCooldown) microInfo[0].canMove = false;
+
             for (RobotInfo unit : units) {
                 if (Clock.getBytecodeNum() > MAX_MICRO_BYTECODE) break;
                 int t = unit.getType().ordinal();
-                currentDPS = DPS[t] / (rc.senseMapInfo(unit.getLocation()).getCooldownMultiplier(rc.getTeam()));
+                currentDPS = DPS[t] * (rc.senseMapInfo(unit.getLocation()).getCooldownMultiplier(rc.getTeam()));
                 if (currentDPS <= 0) continue;
                 currentRangeExtended = rangeExtended[t];
                 currentActionRadius = unit.getType().actionRadiusSquared;
@@ -85,7 +108,7 @@ public class Micro {
                 units = rc.senseNearbyRobots(myVisionRange, rc.getTeam());
                 for (RobotInfo unit : units) {
                     if (Clock.getBytecodeNum() > MAX_MICRO_BYTECODE) break;
-                    currentDPS = DPS[unit.getType().ordinal()] / (rc.senseMapInfo(unit.getLocation()).getCooldownMultiplier(rc.getTeam()));
+                    currentDPS = DPS[unit.getType().ordinal()] * (rc.senseMapInfo(unit.getLocation()).getCooldownMultiplier(rc.getTeam()));
                     microInfo[0].updateAlly(unit);
                     microInfo[1].updateAlly(unit);
                     microInfo[2].updateAlly(unit);
@@ -143,8 +166,8 @@ public class Micro {
                     try{
                         MapInfo locationInfo = rc.senseMapInfo(this.location);
                         if(canAttack){
-                            this.DPSreceived -= myDPS/(locationInfo.getCooldownMultiplier(rc.getTeam()));
-                            this.alliesTargeting += myDPS/(locationInfo.getCooldownMultiplier(rc.getTeam()));
+                            this.DPSreceived -= myDPS*(locationInfo.getCooldownMultiplier(rc.getTeam()));
+                            this.alliesTargeting += myDPS*(locationInfo.getCooldownMultiplier(rc.getTeam()));
                         }
                     }catch(Exception e){
                         e.printStackTrace();

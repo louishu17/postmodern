@@ -108,19 +108,19 @@ public class Headquarters extends Robot{
      * produce a unit with the highest priority that it is capable of producing
      */
     void produceUnit(){
-         Collections.sort(unitTrackers, Comparator.comparing(UnitTracker::getScore));
-         for (UnitTracker tracker : unitTrackers){
-             if (constructUnit(tracker.type, tracker.standardAnchor, tracker.accAnchor)){
-                 //now, a unit was actually constructed
-                 tracker.updateScore(rc);
-                 if (tracker.unitIndex == stockpile.typeToSaveFor){
-                     //we used the stockpile to construct the unit, so update the stockpile
-                     stockpile.useStockpileToConstruct(tracker.unitIndex);
-                     stockpile.setNextTypeToSaveFor(this, rc);
-                 }
-             }
-         }
-     }
+        Collections.sort(unitTrackers, Comparator.comparing(UnitTracker::getScore));
+        for (UnitTracker tracker : unitTrackers){
+            if (constructUnit(tracker.type, tracker.standardAnchor, tracker.accAnchor)){
+                //now, a unit was actually constructed
+                tracker.updateScore(rc);
+                if (tracker.unitIndex == stockpile.typeToSaveFor){
+                    //we used the stockpile to construct the unit, so update the stockpile
+                    stockpile.useStockpileToConstruct(tracker.unitIndex);
+                    stockpile.setNextTypeToSaveFor(this, rc);
+                }
+            }
+        }
+    }
 
     /**
      *

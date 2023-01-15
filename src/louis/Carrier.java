@@ -21,11 +21,13 @@ public class Carrier extends Robot{
         tryDepositAnchor();
         tryCollectResource();
         tryDepositResource();
+        tryAttack(true);
         moveToTarget();
         tryCollectAnchor();
         tryDepositAnchor();
         tryCollectResource();
         tryDepositResource();
+        tryAttack(false);
     }
 
     void moveToTarget(){
@@ -46,7 +48,7 @@ public class Carrier extends Robot{
                 if(loc == null) return explore.getExploreTarget();
                 if (loc != null){
                     rc.setIndicatorString("Going to " + loc.toString());
-                    rc.setIndicatorDot(loc,100,100,100);
+                    rc.setIndicatorDot(loc,0,0,255);
                 }
             }else{
                 if(totalResources == GameConstants.CARRIER_CAPACITY){
@@ -66,7 +68,7 @@ public class Carrier extends Robot{
                     if (loc == null) return explore.getExploreTarget();
                     if (loc != null){
                         rc.setIndicatorString("Going to " + loc.toString());
-                        rc.setIndicatorDot(loc,100,100,100);
+                        rc.setIndicatorDot(loc,0,0,255);
                     }
                 }
             }

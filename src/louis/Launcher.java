@@ -10,26 +10,9 @@ public class Launcher extends Robot{
         super(rc);
     }
     void play(){
-        tryAttack();
+        tryAttack(true);
         tryMove();
-        tryAttack();
-    }
-
-    void tryAttack(){
-        if(!rc.isActionReady()) return;
-        try{
-            RobotInfo[] enemies = rc.senseNearbyRobots(explore.myVisionRange, rc.getTeam().opponent());
-            AttackTarget bestTarget = null;
-            for(RobotInfo enemy: enemies){
-                if(rc.canAttack(enemy.location)){
-                    AttackTarget at = new AttackTarget(enemy);
-                    if(at.isBetterThan(bestTarget)) bestTarget = at;
-                }
-            }
-            if(bestTarget != null && rc.canAttack(bestTarget.mloc)) rc.attack(bestTarget.mloc);
-        }catch(Exception e){
-            e.printStackTrace();
-        }
+        tryAttack(false);
     }
 
     void tryMove(){
@@ -55,72 +38,4 @@ public class Launcher extends Robot{
         return null;
     }
 
-
-    class AttackTarget{
-        RobotType type;
-        int health;
-        boolean attacker = false;
-        MapLocation mloc;
-
-        boolean isBetterThan(AttackTarget t){
-            if (t == null) return true;
-            if (attacker & !t.attacker) return true;
-            if (!attacker & t.attacker) return false;
-            return health <= t.health;
-        }
-
-        AttackTarget(RobotInfo r){
-            type = r.getType();
-            health = r.getHealth();
-            mloc = r.getLocation();
-            switch(type){
-                case HEADQUARTERS:
-                    attacker = true;
-                default:
-                    break;
-            }
-        }
-    }
-
-    class MoveTarget{
-        RobotType type;
-        int health;
-        int priority;
-        MapLocation mloc;
-
-        boolean isBetterThan(MoveTarget t){
-            if(priority <= 1) return false;
-            if (t == null) return true;
-            if (t.priority <= 1) return true;
-            if(priority > t.priority) return true;
-            if(priority < t.priority) return true;
-            return health <= t.health;
-        }
-
-        MoveTarget(RobotInfo r){
-            this.type = r.getType();
-            this.health = r.getHealth();
-            this.mloc = r.getLocation();
-            switch(r.getType()){
-                case HEADQUARTERS:
-                    priority = 6;
-                    break;
-                case LAUNCHER:
-                    priority = 5;
-                    break;
-                case CARRIER:
-                    priority = 4;
-                    break;
-                case DESTABILIZER:
-                    priority = 3;
-                    break;
-                case AMPLIFIER:
-                    priority = 2;
-                    break;
-                case BOOSTER:
-                    priority = 1;
-                    break;
-            }
-        }
-    }
 }
