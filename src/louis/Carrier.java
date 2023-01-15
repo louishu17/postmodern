@@ -129,10 +129,12 @@ public class Carrier extends Robot{
         if(!rc.isActionReady()) return;
         try{
             for(ResourceType r: resourceTypes){
-                for(Direction d: directions){
-                    int amount = rc.getResourceAmount(r);
-                    if(amount == 0) continue;
-                    MapLocation newLoc = rc.getLocation().add(d);
+                int amount = rc.getResourceAmount(r);
+                if(amount == 0) continue;
+                RobotInfo[] allies = rc.senseNearbyRobots(rc.getType().actionRadiusSquared, rc.getTeam());
+                for (RobotInfo ally : allies) {
+                    if (! (ally.getType() == RobotType.HEADQUARTERS )) continue;
+                    MapLocation newLoc = ally.getLocation();
                     if(!rc.onTheMap(newLoc)) continue;
                     if(rc.canTransferResource(newLoc,r,amount)){
                         rc.transferResource(newLoc,r, amount);

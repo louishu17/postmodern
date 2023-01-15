@@ -18,8 +18,19 @@ public class Launcher extends Robot{
     void tryMove(){
         if(!rc.isMovementReady()) return;
         MapLocation target = getBestTarget();
-        if (target == null) target = comm.getClosestEnemyHeadquarters();
-        if (target == null) target = explore.getExploreTarget();
+        if (target == null) {
+            target = comm.getClosestEnemyHeadquarters();
+        }else{
+            rc.setIndicatorLine(rc.getLocation(), target, 255, 0, 0);
+        }
+        if (target == null){
+            target = explore.getExploreTarget();
+        }else{
+            rc.setIndicatorLine(rc.getLocation(), target, 0, 255, 0);
+        }
+        if(target != null){
+            rc.setIndicatorLine(rc.getLocation(), target, 0, 0, 255);
+        }
         bfs.move(target);
     }
 

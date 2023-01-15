@@ -48,8 +48,6 @@ public class Pathfinding {
     public void move(MapLocation loc){
         if (!rc.isMovementReady()) return;
         target = loc;
-
-        rc.setIndicatorLine(rc.getLocation(), target, 255, 0, 0);
         bugNav.move();
     }
 
