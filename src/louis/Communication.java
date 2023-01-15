@@ -5,6 +5,8 @@ import battlecode.common.*;
 public class Communication {
     RobotController rc;
 
+    boolean needToCom = false;
+
     static final int MAX_HEADQUARTERS = 4;
     static final int HEADQUARTERS_INDEX = 0;
     static final int HEADQUARTERS_NB_INDEX = 14;
@@ -127,9 +129,15 @@ public class Communication {
                     }
                 }
             }
-            if (rc.canWriteSharedArray(H_SYM,hSym) && updateh) rc.writeSharedArray(H_SYM, hSym);
-            if (rc.canWriteSharedArray(V_SYM,vSym) && updatev) rc.writeSharedArray(V_SYM, vSym);
-            if (rc.canWriteSharedArray(R_SYM, rSym) && updater) rc.writeSharedArray(R_SYM, rSym);
+            if (rc.canWriteSharedArray(H_SYM,hSym) && updateh){
+                rc.writeSharedArray(H_SYM, hSym);
+            }
+            if (rc.canWriteSharedArray(V_SYM,vSym) && updatev) {
+                rc.writeSharedArray(V_SYM, vSym);
+            }
+            if (rc.canWriteSharedArray(R_SYM, rSym) && updater){
+                rc.writeSharedArray(R_SYM, rSym);
+            }
             return ans;
 
         }catch(Exception e){

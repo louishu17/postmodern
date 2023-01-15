@@ -13,7 +13,7 @@ public class Micro {
     static int myRange;
     static int myVisionRange;
     static double myDPS;
-    static final int MAX_MICRO_BYTECODE = 6000;
+    static final int MAX_MICRO_BYTECODE = 2000;
 
     double[] DPS = new double[]{0,0,0,0,0,0};
     int[] rangeExtended = new int[]{0, 0, 0, 0,0,0, 0};
@@ -89,7 +89,7 @@ public class Micro {
             for (RobotInfo unit : units) {
                 if (Clock.getBytecodeNum() > MAX_MICRO_BYTECODE) break;
                 int t = unit.getType().ordinal();
-                currentDPS = DPS[t] * (rc.senseMapInfo(unit.getLocation()).getCooldownMultiplier(rc.getTeam()));
+                currentDPS = DPS[t] / (rc.senseMapInfo(unit.getLocation()).getCooldownMultiplier(rc.getTeam()));
                 if (currentDPS <= 0) continue;
                 currentRangeExtended = rangeExtended[t];
                 currentActionRadius = unit.getType().actionRadiusSquared;
@@ -108,7 +108,7 @@ public class Micro {
                 units = rc.senseNearbyRobots(myVisionRange, rc.getTeam());
                 for (RobotInfo unit : units) {
                     if (Clock.getBytecodeNum() > MAX_MICRO_BYTECODE) break;
-                    currentDPS = DPS[unit.getType().ordinal()] * (rc.senseMapInfo(unit.getLocation()).getCooldownMultiplier(rc.getTeam()));
+                    currentDPS = DPS[unit.getType().ordinal()] / (rc.senseMapInfo(unit.getLocation()).getCooldownMultiplier(rc.getTeam()));
                     microInfo[0].updateAlly(unit);
                     microInfo[1].updateAlly(unit);
                     microInfo[2].updateAlly(unit);
@@ -130,6 +130,7 @@ public class Micro {
 
             if (rc.canMove(bestMicro.dir)) {
                 rc.setIndicatorString("Moving back: " + bestMicro.dir);
+                System.out.println("RETREAT");
                 rc.move(bestMicro.dir);
                 return true;
             }
@@ -166,8 +167,8 @@ public class Micro {
                     try{
                         MapInfo locationInfo = rc.senseMapInfo(this.location);
                         if(canAttack){
-                            this.DPSreceived -= myDPS*(locationInfo.getCooldownMultiplier(rc.getTeam()));
-                            this.alliesTargeting += myDPS*(locationInfo.getCooldownMultiplier(rc.getTeam()));
+                            this.DPSreceived -= myDPS/(locationInfo.getCooldownMultiplier(rc.getTeam()));
+                            this.alliesTargeting += myDPS/(locationInfo.getCooldownMultiplier(rc.getTeam()));
                         }
                     }catch(Exception e){
                         e.printStackTrace();

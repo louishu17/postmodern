@@ -29,6 +29,7 @@ public class Launcher extends Robot{
             rc.setIndicatorLine(rc.getLocation(), target, 0, 255, 0);
         }
         if(target != null){
+            rc.setIndicatorString("Going to: "+ rc.getLocation().toString());
             rc.setIndicatorLine(rc.getLocation(), target, 0, 0, 255);
         }
         bfs.move(target);

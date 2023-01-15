@@ -63,7 +63,10 @@ public abstract class Robot {
                     if (at.isBetterThan(bestTarget)) bestTarget = at;
                 }
             }
-            if (bestTarget != null && rc.canAttack(bestTarget.mloc)) rc.attack(bestTarget.mloc);
+            if (bestTarget != null && rc.canAttack(bestTarget.mloc)) {
+                if(rc.getType() == RobotType.CARRIER) System.out.println("CARRIER SHOT");
+                rc.attack(bestTarget.mloc);
+            }
         }catch(Exception e){
             e.printStackTrace();
         }

@@ -17,17 +17,17 @@ public class Carrier extends Robot{
         myID = rc.getID();
     }
     void play(){
-        tryCollectAnchor();
-        tryDepositAnchor();
-        tryCollectResource();
-        tryDepositResource();
         tryAttack(true);
-        moveToTarget();
-        tryCollectAnchor();
-        tryDepositAnchor();
         tryCollectResource();
         tryDepositResource();
+        tryCollectAnchor();
+        tryDepositAnchor();
+        moveToTarget();
         tryAttack(false);
+        tryCollectResource();
+        tryDepositResource();
+        tryCollectAnchor();
+        tryDepositAnchor();
     }
 
     void moveToTarget(){
@@ -64,7 +64,7 @@ public class Carrier extends Robot{
                         loc = explore.getClosestMana();
                         if (loc == null) loc = explore.getClosestAdamantium();
                     }
-                    if (loc == null) loc = explore.getClosestEnemyOccupiedIsland();
+//                    if (loc == null) loc = explore.getClosestEnemyOccupiedIsland();
                     if (loc == null) return explore.getExploreTarget();
                     if (loc != null){
                         rc.setIndicatorString("Going to " + loc.toString());

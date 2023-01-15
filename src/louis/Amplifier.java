@@ -20,7 +20,8 @@ public class Amplifier extends Robot{
     }
 
     MapLocation getTarget(){
-        MapLocation loc = explore.getExploreTarget();
+        MapLocation loc = comm.getClosestEnemyHeadquarters();
+        if(loc == null) loc = explore.getExploreTarget();
         return loc;
     }
 }
