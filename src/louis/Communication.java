@@ -6,9 +6,11 @@ public class Communication {
     RobotController rc;
 
     static final int MAX_HEADQUARTERS = 4;
-    static final int HEADQUARTERS_INDEX = 0;
+
+
     static final int HEADQUARTERS_NB_INDEX = 14;
 
+    static final int HEADQUARTERS_LOC_INDEX = 41;
     static final int CARRIER_COUNT = 60;
     static final int LAUNCHER_COUNT = 59;
 
@@ -40,6 +42,7 @@ public class Communication {
                 int id = rc.readSharedArray(3 * myHeadquartersIndex);
                 if(id == 0){
                     rc.writeSharedArray(3 * myHeadquartersIndex, myID+1);
+                    rc.writeSharedArray(HEADQUARTERS_LOC_INDEX + myHeadquartersIndex, Util.encodeLoc(rc.getLocation()));
                 }
                 break;
             }
@@ -85,7 +88,7 @@ public class Communication {
             int rSym = rc.readSharedArray(R_SYM);
             boolean updater = false;
             while (i-- > 0){
-                MapLocation newLoc = Util.getLocation(rc.readSharedArray(3*i+1));
+                MapLocation newLoc = Util.getLocation(rc.readSharedArray(HEADQUARTERS_LOC_INDEX + i));
                 if ((hSym&1) == 0 && (hSym & (1 << (i+1))) == 0){
                     MapLocation symLoc = getHSym(newLoc);
                     if (rc.canSenseLocation(symLoc)){
@@ -147,6 +150,74 @@ public class Communication {
         }
         return null;
     }
+    MapLocation getClosestAllyHeadquarter(){
+        MapLocation ans = null;
+        int bestDist = 0;
+        MapLocation myLoc = rc.getLocation();
+        try {
+            RobotInfo[] allies = rc.senseNearbyRobots(myLoc, rc.getType().visionRadiusSquared, rc.getTeam());
+            for (RobotInfo r : allies){
+                if (r.getType() != RobotType.HEADQUARTERS) continue;
+                int d = r.getLocation().distanceSquaredTo(myLoc);
+                if (ans == null || bestDist > d) {
+                    bestDist = d;
+                    ans = r.getLocation();
+                }
+            }
+            if (ans != null) return ans;
+
+            int i = rc.readSharedArray(HEADQUARTERS_NB_INDEX);
+            while (i-- > 0) {
+                MapLocation newLoc = Util.getLocation(rc.readSharedArray(3 * i + 1));
+                int d = myLoc.distanceSquaredTo(newLoc);
+                if (ans == null || bestDist > d) {
+                    bestDist = d;
+                    ans = newLoc;
+                }
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        return ans;
+    }
+
+    boolean isEnemyTerritoryRadial(MapLocation loc){
+        try {
+            double minDistAlly = -1, minDistEnemy = -1;
+            int i = rc.readSharedArray(HEADQUARTERS_NB_INDEX);
+            int hSym = rc.readSharedArray(H_SYM);
+            int vSym = rc.readSharedArray(V_SYM);
+            int rSym = rc.readSharedArray(R_SYM);
+            while (i-- > 0) {
+                MapLocation newLoc = Util.getLocation(rc.readSharedArray( HEADQUARTERS_LOC_INDEX + i));
+                int d = loc.distanceSquaredTo(newLoc);
+                if (minDistAlly < 0 || d < minDistAlly) minDistAlly = d;
+                if ((hSym & 1) == 0 && (hSym & (1 << (i + 1))) == 0) {
+                    MapLocation symLoc = getHSym(newLoc);
+                    d = loc.distanceSquaredTo(symLoc);
+                    if (minDistEnemy < 0 || d < minDistEnemy) minDistEnemy = d;
+                }
+                if ((vSym & 1) == 0 && (vSym & (1 << (i + 1))) == 0) {
+                    MapLocation symLoc = getVSym(newLoc);
+                    d = loc.distanceSquaredTo(symLoc);
+                    if (minDistEnemy < 0 || d < minDistEnemy) minDistEnemy = d;
+                }
+                if ((rSym & 1) == 0 && (rSym & (1 << (i + 1))) == 0) {
+                    MapLocation symLoc = getRSym(newLoc);
+                    d = loc.distanceSquaredTo(symLoc);
+                    if (minDistEnemy < 0 || d < minDistEnemy) minDistEnemy = d;
+                }
+            }
+            if (minDistEnemy < 0) return false;
+            if (minDistAlly <= minDistEnemy) return false;
+            if (minDistEnemy <= Constants.DANGER_RADIUS) return true;
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+
 
 
     void increaseIndex(int index, int amount){

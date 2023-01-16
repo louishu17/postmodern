@@ -17,22 +17,17 @@ public class Launcher extends Robot{
 
     void tryMove(){
         if(!rc.isMovementReady()) return;
-        MapLocation target = getBestTarget();
-        if (target == null) {
-            target = comm.getClosestEnemyHeadquarters();
-        }else{
-            rc.setIndicatorLine(rc.getLocation(), target, 255, 0, 0);
-        }
-        if (target == null){
-            target = explore.getExploreTarget();
-        }else{
-            rc.setIndicatorLine(rc.getLocation(), target, 0, 255, 0);
-        }
-        if(target != null){
-            rc.setIndicatorString("Going to: "+ rc.getLocation().toString());
-            rc.setIndicatorLine(rc.getLocation(), target, 0, 0, 255);
-        }
+        MapLocation target = getTarget();
         bfs.move(target);
+    }
+
+    MapLocation getTarget(){
+        if(rc.getRoundNum() < Constants.ATTACK_TURN && comm.isEnemyTerritoryRadial(rc.getLocation())) return comm.getClosestAllyHeadquarter();
+        MapLocation ans = getBestTarget();
+        if(ans != null) return ans;
+        ans = comm.getClosestEnemyHeadquarters();
+        if(ans != null) return ans;
+        return explore.getExploreTarget();
     }
 
     MapLocation getBestTarget(){
