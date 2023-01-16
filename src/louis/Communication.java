@@ -217,9 +217,6 @@ public class Communication {
         return false;
     }
 
-
-
-
     void increaseIndex(int index, int amount){
         try {
             rc.writeSharedArray(index, rc.readSharedArray(index) + amount);

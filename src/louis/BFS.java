@@ -10,10 +10,12 @@ public class BFS {
     BFS(RobotController rc){
         this.rc = rc;
         this.path = new Pathfinding(rc);
-        this.micro = new Micro(rc);
-    }
-    void initTurn(){
-        path.initTurn();
+//        if(Util.isAttacker(rc.getType())){
+            this.micro = new MicroAttackers(rc);
+//        } else{
+//            this.micro = new MicroCarriers(rc);
+//            this.micro.setPathfinding(path);
+//        }
     }
 
     void move(MapLocation target){
@@ -21,20 +23,6 @@ public class BFS {
         if (!rc.isMovementReady()) return;
         if(micro.doMicro()) return;
         if(rc.getLocation().distanceSquaredTo(target) == 0) return;
-
         path.move(target);
     }
-
-    void move(Direction dir){
-        try{
-            if(!rc.canMove(dir)){
-                return;
-            }
-            rc.move(dir);
-        }catch(Exception e){
-            e.printStackTrace();
-        }
-    }
-
-
 }
