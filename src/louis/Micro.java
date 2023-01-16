@@ -36,8 +36,6 @@ public class Micro {
     static double currentActionRadius;
     static boolean canAttack;
 
-    final static double MAX_COOLDOWN_DIFF = 0.2;
-
     boolean doMicro(){
         try{
             if (!rc.isMovementReady()) return false;
@@ -62,29 +60,6 @@ public class Micro {
 
             MicroInfo[] microInfo = new MicroInfo[9];
             for (int i = 0; i < 9; ++i) microInfo[i] = new MicroInfo(dirs[i]);
-
-
-            double minCooldown = microInfo[8].cooldown;
-            if (microInfo[7].canMove && minCooldown > microInfo[7].cooldown) minCooldown = microInfo[7].cooldown;
-            if (microInfo[6].canMove && minCooldown > microInfo[6].cooldown) minCooldown = microInfo[6].cooldown;
-            if (microInfo[5].canMove && minCooldown > microInfo[5].cooldown) minCooldown = microInfo[5].cooldown;
-            if (microInfo[4].canMove && minCooldown > microInfo[4].cooldown) minCooldown = microInfo[4].cooldown;
-            if (microInfo[3].canMove && minCooldown > microInfo[3].cooldown) minCooldown = microInfo[3].cooldown;
-            if (microInfo[2].canMove && minCooldown > microInfo[2].cooldown) minCooldown = microInfo[2].cooldown;
-            if (microInfo[1].canMove && minCooldown > microInfo[1].cooldown) minCooldown = microInfo[1].cooldown;
-            if (microInfo[0].canMove && minCooldown > microInfo[0].cooldown) minCooldown = microInfo[0].cooldown;
-
-            minCooldown += MAX_COOLDOWN_DIFF;
-
-            if (microInfo[8].cooldown > minCooldown) microInfo[8].canMove = false;
-            if (microInfo[7].cooldown > minCooldown) microInfo[7].canMove = false;
-            if (microInfo[6].cooldown > minCooldown) microInfo[6].canMove = false;
-            if (microInfo[5].cooldown > minCooldown) microInfo[5].canMove = false;
-            if (microInfo[4].cooldown > minCooldown) microInfo[4].canMove = false;
-            if (microInfo[3].cooldown > minCooldown) microInfo[3].canMove = false;
-            if (microInfo[2].cooldown > minCooldown) microInfo[2].canMove = false;
-            if (microInfo[1].cooldown > minCooldown) microInfo[1].canMove = false;
-            if (microInfo[0].cooldown > minCooldown) microInfo[0].canMove = false;
 
             for (RobotInfo unit : units) {
                 if (Clock.getBytecodeNum() > MAX_MICRO_BYTECODE) break;
@@ -150,19 +125,12 @@ public class Micro {
         double enemiesTargeting = 0;
         double alliesTargeting = 0;
         boolean canMove = true;
-        double cooldown = 0.0;
 
         public MicroInfo(Direction dir){
             this.dir = dir;
             this.location = rc.getLocation().add(dir);
             if(!rc.canMove(dir)) canMove = false;
             else{
-                try{
-                    cooldown = rc.senseMapInfo(rc.getLocation()).getCooldownMultiplier(rc.getTeam());
-                }catch(Exception e){
-                    e.printStackTrace();
-                }
-
                 if(!hurt){
                     try{
                         MapInfo locationInfo = rc.senseMapInfo(this.location);
@@ -188,7 +156,8 @@ public class Micro {
 
         void updateAlly(RobotInfo unit){
             if (!canMove) return;
-            alliesTargeting += currentDPS;
+            int dist = unit.getLocation().distanceSquaredTo(location);
+            if (dist <= currentRangeExtended) alliesTargeting += currentDPS;
         }
 
         int safe(){
@@ -213,9 +182,6 @@ public class Micro {
 
             if (inRange() && !M.inRange()) return true;
             if (!inRange() && M.inRange()) return false;
-
-            if (cooldown < M.cooldown) return true;
-            if (M.cooldown < cooldown) return false;
 
             if (alliesTargeting > M.alliesTargeting) return true;
             if (alliesTargeting < M.alliesTargeting) return false;
