@@ -7,12 +7,20 @@ public class Communication {
 
     static final int MAX_HEADQUARTERS = 4;
 
+    static final int ADAMANTIUM_INDEX = 15;
+    static final int ADAMANTIUM_QUEUE_SIZE = 9;
+
+    static final int MANA_INDEX = 25;
+    static final int MANA_QUEUE_SIZE = 9;
+
 
     static final int HEADQUARTERS_NB_INDEX = 14;
 
+    static final int BUILDING_QUEUE_INDEX = 54;
     static final int HEADQUARTERS_LOC_INDEX = 41;
     static final int CARRIER_COUNT = 60;
     static final int LAUNCHER_COUNT = 59;
+
 
 
     static final int H_SYM = 63;
@@ -24,11 +32,16 @@ public class Communication {
     static int myID;
     static int myHeadquartersIndex = -1;
     static boolean headquarter = false;
+    static boolean soldier = false;
+
+    static final int INF_COMM = (1 << 16) - 1;
+
 
     Communication(RobotController rc){
         this.rc = rc;
         myID = rc.getID();
         if(rc.getType() == RobotType.HEADQUARTERS) headquarter = true;
+        if(rc.getType() == RobotType.LAUNCHER) soldier = true;
         if(headquarter) setHeadquartersIndex();
         mapWidth = rc.getMapWidth();
         mapHeight = rc.getMapHeight();
@@ -53,15 +66,26 @@ public class Communication {
     }
     //only headquarters
     void reportSelf(){
-        if(!headquarter) return;
         try{
-         int locCode = Util.encodeLoc(rc.getLocation());
-         rc.writeSharedArray(3*myHeadquartersIndex+1, locCode);
-         rc.writeSharedArray(3*myHeadquartersIndex+2, rc.getRoundNum());
+            if(headquarter){
+                int locCode = Util.encodeLoc(rc.getLocation());
+                rc.writeSharedArray(3*myHeadquartersIndex+1, locCode);
+                rc.writeSharedArray(3*myHeadquartersIndex+2, rc.getRoundNum());
+            }
         }catch(Exception e){
             e.printStackTrace();
         }
     }
+
+    void reportAdamantium(MapLocation loc){
+        return;
+    }
+
+    void reportMana(MapLocation loc, int lead){
+        return;
+    }
+
+
 
     MapLocation getHSym(MapLocation loc){
         return new MapLocation(mapWidth - loc.x - 1, loc.y);
@@ -224,6 +248,41 @@ public class Communication {
         catch (Exception e){
             e.printStackTrace();
         }
+    }
+
+    void reportBuilt(RobotType t, int amount){
+        try {
+            rc.writeSharedArray(BUILDING_QUEUE_INDEX + t.ordinal(), amount);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    int getBuildingScore(RobotType r){
+        try {
+            return rc.readSharedArray(BUILDING_QUEUE_INDEX + r.ordinal());
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    void activateDanger(){
+        try{
+            int carrierScore = getBuildingScore(RobotType.CARRIER);
+            if (carrierScore <= Util.getMinMiners()) {
+                rc.writeSharedArray(BUILDING_QUEUE_INDEX + RobotType.CARRIER.ordinal(), Util.getMinMiners() + 1);
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    MapLocation getClosestAdamantium(){
+        return null;
+    }
+    MapLocation getClosestMana(){
+        return null;
     }
 
 }

@@ -13,7 +13,6 @@ public class MicroAttackers extends Micro {
     static int myRange;
     static int myVisionRange;
     static double myDPS;
-    static final int MAX_MICRO_BYTECODE = 2000;
 
     boolean severelyHurt = false;
 
@@ -109,7 +108,6 @@ public class MicroAttackers extends Micro {
 
             if (rc.canMove(bestMicro.dir)) {
                 rc.setIndicatorString("Moving back: " + bestMicro.dir);
-                System.out.println("RETREAT");
                 rc.move(bestMicro.dir);
                 return true;
             }
@@ -181,8 +179,6 @@ public class MicroAttackers extends Micro {
 
             if (safe() > M.safe()) return true;
             if (safe() < M.safe()) return false;
-
-            if (hurt) return true;
 
             if (inRange() && !M.inRange()) return true;
             if (!inRange() && M.inRange()) return false;

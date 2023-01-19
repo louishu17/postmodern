@@ -6,10 +6,19 @@ import battlecode.common.RobotInfo;
 import battlecode.common.RobotType;
 
 public class Launcher extends Robot{
+
+    boolean explorer;
+
+    boolean chickenBehavior = false;
     Launcher(RobotController rc){
         super(rc);
+        if(comm.getBuildingScore(RobotType.LAUNCHER) % 3 == 1) explorer = true;
     }
     void play(){
+        if(explore.getClosestAdamantium() != null){
+            rc.setIndicatorString("ADAMANTIUM WELL: " + explore.getClosestAdamantium());
+        }
+        checkChickenBehavior();
         tryAttack(true);
         tryMove();
         tryAttack(false);
@@ -18,20 +27,31 @@ public class Launcher extends Robot{
     void tryMove(){
         if(!rc.isMovementReady()) return;
         MapLocation target = getTarget();
+        if (target != null){
+            rc.setIndicatorLine(rc.getLocation(),target, 255, 0, 0);
+        }
         bfs.move(target);
     }
 
     MapLocation getTarget(){
-        if(rc.getRoundNum() < Constants.ATTACK_TURN && comm.isEnemyTerritoryRadial(rc.getLocation())) return comm.getClosestAllyHeadquarter();
-        MapLocation ans = getBestTarget();
-        if(ans != null) return ans;
-        ans = comm.getClosestEnemyHeadquarters();
-        if(ans != null) return ans;
+        if(comm.isEnemyTerritoryRadial(rc.getLocation())) return comm.getClosestAllyHeadquarter();
+        MapLocation target = getBestTarget();
+        if(target != null) return target;
+        if(!explorer && target == null) target = comm.getClosestEnemyHeadquarters();
+        if(target != null) return target;
         return explore.getExploreTarget();
     }
 
     MapLocation getBestTarget(){
         try{
+            if(chickenBehavior){
+                MapLocation ans = comm.getClosestAllyHeadquarter();
+                if(ans != null){
+                    int d = ans.distanceSquaredTo(rc.getLocation());
+                    if (d <= RobotType.LAUNCHER.actionRadiusSquared) return rc.getLocation();
+                    return ans;
+                }
+            }
             MoveTarget bestTarget = null;
             RobotInfo[] enemies = rc.senseNearbyRobots(rc.getLocation(), explore.myVisionRange, rc.getTeam().opponent());
             for(RobotInfo enemy: enemies){
@@ -43,6 +63,14 @@ public class Launcher extends Robot{
             e.printStackTrace();
         }
         return null;
+    }
+
+    void checkChickenBehavior(){
+        if (!chickenBehavior && hurt()) chickenBehavior = true;
+        if (chickenBehavior && rc.getHealth() >= rc.getType().getMaxHealth()) chickenBehavior = false;
+    }
+    boolean hurt(){
+        return rc.getHealth()*3 <= rc.getType().getMaxHealth();
     }
 
 }

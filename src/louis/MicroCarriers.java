@@ -3,12 +3,13 @@ package louis;
 import battlecode.common.*;
 
 public class MicroCarriers extends Micro {
+    Pathfinding path;
+    static final int FLEE_STRIDE = 20;
     MicroCarriers(RobotController rc){
         super(rc);
+        path = new Pathfinding(rc);
     }
 
-
-    static final int FLEE_STRIDE = 20;
 
     MapLocation normalize (int x, int y){
         double dx = x, dy = y;
@@ -19,6 +20,7 @@ public class MicroCarriers extends Micro {
         dy *= FLEE_STRIDE;
         int xi = rc.getLocation().x + (int) dx, yi = rc.getLocation().y + (int) dy;
         if (xi < 0) xi = 0;
+        if (yi < 0) yi = 0;
         if (xi >= rc.getMapWidth()) xi = rc.getMapWidth() - 1;
         if (yi >= rc.getMapHeight()) yi = rc.getMapHeight() - 1;
         return new MapLocation (xi, yi);
@@ -46,8 +48,6 @@ public class MicroCarriers extends Micro {
             if (!found) return false;
             if (x == 0 && y == 0) return true;
             MapLocation target = normalize(x,y);
-            if(target == null) return true;
-            System.out.println(target);
             path.move(target);
             return true;
         } catch(Exception e){

@@ -33,6 +33,8 @@ public class Explore {
     MapLocation closestMyHeadquarters = null;
     int distMyHeadquarters = 0;
 
+    boolean compareIslands =  false;
+
     static int BYTECODE_EXPLORE_RESOURCE_LIMIT;
 
     Explore(RobotController rc){
@@ -43,9 +45,10 @@ public class Explore {
             compareFreeIslands = true;
             compareEnemyOccupiedIslands = true;
         }
+
         switch(rc.getType()){
             case CARRIER:
-                BYTECODE_EXPLORE_RESOURCE_LIMIT = 2000;
+                BYTECODE_EXPLORE_RESOURCE_LIMIT = 4000;
                 break;
             default:
                 BYTECODE_EXPLORE_RESOURCE_LIMIT = 3000;
@@ -103,7 +106,6 @@ public class Explore {
             distFreeIsland = 0;
             distEnemyOccupiedIsland = 0;
 
-            MapLocation myLoc = rc.getLocation();
             int[] ids = rc.senseNearbyIslands();
             for(int id: ids){
                 if(Clock.getBytecodeNum() > BYTECODE_EXPLORE_RESOURCE_LIMIT) break;

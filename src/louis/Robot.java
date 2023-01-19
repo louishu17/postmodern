@@ -64,13 +64,41 @@ public abstract class Robot {
                 }
             }
             if (bestTarget != null && rc.canAttack(bestTarget.mloc)) {
-                if(rc.getType() == RobotType.CARRIER) System.out.println("CARRIER SHOT");
                 rc.attack(bestTarget.mloc);
             }
         }catch(Exception e){
             e.printStackTrace();
         }
     }
+
+    boolean constructRobotGreedy(RobotType t){
+        return constructRobotGreedy(t, null);
+    }
+
+    boolean constructRobotGreedy(RobotType t, MapLocation target){
+        try {
+            MapLocation myLoc = rc.getLocation();
+            Direction bestDir = null;
+            int leastEstimation = 0;
+            for (Direction d : directions) {
+                if (!rc.canBuildRobot(t,myLoc.add(d))) continue;
+                int e = 1000000;
+                if (target != null) e = myLoc.add(d).distanceSquaredTo(target);
+                if (bestDir == null || e < leastEstimation){
+                    leastEstimation = e;
+                    bestDir = d;
+                }
+            }
+            if (bestDir != null){
+                if (rc.canBuildRobot(t, myLoc.add(bestDir))) rc.buildRobot(t, myLoc.add(bestDir));
+                return true;
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     class AttackTarget{
         RobotType type;
         int health;

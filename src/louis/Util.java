@@ -23,4 +23,13 @@ public class Util {
     static boolean hurt(int h){
         return h < Constants.CRITICAL_HEALTH;
     }
+
+    static Integer minMiners = null;
+
+    static int getMinMiners(){
+        if (minMiners != null) return minMiners;
+        minMiners = (Robot.rc.getMapHeight()* Robot.rc.getMapWidth())/200;
+        if (minMiners > Constants.INITIAL_MINERS) minMiners = Constants.INITIAL_MINERS;
+        return minMiners;
+    }
 }

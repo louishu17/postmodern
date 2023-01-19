@@ -1,13 +1,10 @@
 package louis;
 
 import battlecode.common.*;
-import battlecode.world.Well;
 
 public class Carrier extends Robot{
 
     int actionRadius;
-    boolean shouldMove = true;
-    int minerIndex = 0;
 
     ResourceType[] resourceTypes = {ResourceType.ADAMANTIUM, ResourceType.MANA};
 
@@ -17,81 +14,50 @@ public class Carrier extends Robot{
         super(rc);
         actionRadius = rc.getType().actionRadiusSquared;
         myID = rc.getID();
-        checkBehavior();
     }
     void play(){
-        tryAttack(true);
+        if(getTotalResources() > 0){
+            tryAttack(true);
+        }
         tryCollectResource();
         tryDepositResource();
         tryCollectAnchor();
         tryDepositAnchor();
         moveToTarget();
-        tryAttack(false);
+        if(getTotalResources() > 0){
+            tryAttack(false);
+        }
         tryCollectResource();
         tryDepositResource();
         tryCollectAnchor();
         tryDepositAnchor();
     }
 
-    void checkBehavior(){
-        try {
-            minerIndex = rc.readSharedArray(comm.CARRIER_COUNT);
-            comm.increaseIndex(comm.CARRIER_COUNT, 1);
-        } catch (Exception e){
-            e.printStackTrace();
+    void moveToTarget(){
+        MapLocation loc = getTarget();
+        if(checkIfNextToWell(loc)){
+            return;
+        }
+        while(rc.isMovementReady()){
+            bfs.move(loc);
         }
     }
 
-    void moveToTarget(){
-        if(!rc.isMovementReady()) return;
-        rc.setIndicatorString("Trying to move");
-        MapLocation loc = getTarget();
-        if (loc != null) rc.setIndicatorString("Target not null!: " + loc.toString());
-        bfs.move(loc);
-    }
-
     MapLocation getTarget(){
-        if(!shouldMove) return rc.getLocation();
         int totalResources = getTotalResources();
         MapLocation loc = null;
         try{
             if(rc.getAnchor() != null){
                 loc = explore.getClosestFreeIsland();
                 if(loc == null) return explore.getExploreTarget();
-                if (loc != null){
-                    rc.setIndicatorString("Going to " + loc.toString());
-                    rc.setIndicatorDot(loc,0,0,255);
-                }
             }else{
                 if(totalResources == GameConstants.CARRIER_CAPACITY){
                     loc = explore.getClosestMyHeadquarters();
                 }
-                if(totalResources == 0)
+                else
                 {
-                    if(minerIndex % 2 == 0){
-                        loc = explore.getClosestAdamantium();
-                        if (loc != null){
-                            rc.setIndicatorString("Going to Adamantium well" + loc.toString());
-                            rc.setIndicatorDot(loc,0,0,255);
-                        }
-                        if (loc == null) loc = explore.getClosestMana();
-                        if (loc != null){
-                            rc.setIndicatorString("Going to Mana well" + loc.toString());
-                            rc.setIndicatorDot(loc,0,0,255);
-                        }
-                    }
-                    else{
-                        loc = explore.getClosestMana();
-                        if (loc != null){
-                            rc.setIndicatorString("Going to Mana well" + loc.toString());
-                            rc.setIndicatorDot(loc,0,0,255);
-                        }
-                        if (loc == null) loc = explore.getClosestAdamantium();
-                        if (loc != null){
-                            rc.setIndicatorString("Going to Adamantium well" + loc.toString());
-                            rc.setIndicatorDot(loc,0,0,255);
-                        }
-                    }
+                    loc = getClosestAdamantium();
+                    if (loc == null) loc = getClosestMana();
 //                    if (loc == null) loc = explore.getClosestEnemyOccupiedIsland();
                     if (loc == null) return explore.getExploreTarget();
                 }
@@ -102,6 +68,28 @@ public class Carrier extends Robot{
         }
 
         return loc;
+    }
+
+    boolean checkIfNextToWell(MapLocation target){
+        MapLocation myLoc = rc.getLocation();
+        for(Direction dir: directions){
+            MapLocation newLoc = myLoc.add(dir);
+            if(newLoc.equals(target)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    MapLocation getClosestAdamantium(){
+        MapLocation ans = explore.getClosestAdamantium();
+        if(ans == null) ans = comm.getClosestAdamantium();
+        return ans;
+    }
+    MapLocation getClosestMana(){
+        MapLocation ans = explore.getClosestMana();
+        if(ans == null) ans = comm.getClosestMana();
+        return ans;
     }
 
     void tryCollectAnchor(){

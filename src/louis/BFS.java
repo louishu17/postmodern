@@ -10,12 +10,11 @@ public class BFS {
     BFS(RobotController rc){
         this.rc = rc;
         this.path = new Pathfinding(rc);
-//        if(Util.isAttacker(rc.getType())){
+        if(Util.isAttacker(rc.getType())){
             this.micro = new MicroAttackers(rc);
-//        } else{
-//            this.micro = new MicroCarriers(rc);
-//            this.micro.setPathfinding(path);
-//        }
+        } else{
+            this.micro = new MicroCarriers(rc);
+        }
     }
 
     void move(MapLocation target){
