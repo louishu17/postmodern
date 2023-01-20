@@ -5,6 +5,8 @@ import battlecode.common.*;
 public class Headquarters2 extends Robot{
     int carrierScore;
     int launcherScore;
+
+    int amplifierScore;
     int carrierRound = 0;
     final int CARRIER_WAITING = 20;
 
@@ -14,7 +16,8 @@ public class Headquarters2 extends Robot{
     }
 
     void play(){
-        while(rc.isActionReady()){
+        int i = 5;
+        while(i-- >= 0){
             buildUnit();
         }
     }
@@ -25,7 +28,20 @@ public class Headquarters2 extends Robot{
         if(closestEnemy != null){
             if(rc.getRoundNum() > 5) comm.activateDanger();
             constructRobotGreedy(RobotType.LAUNCHER,closestEnemy);
+            return;
         }
+        try{
+            if(rc.getRoundNum() > 1500 && rc.getNumAnchors(Anchor.STANDARD) < rc.getIslandCount()){
+                if (rc.getResourceAmount(ResourceType.ADAMANTIUM) >= 100 && rc.getResourceAmount(ResourceType.MANA) >= 100) {
+                    rc.buildAnchor(Anchor.STANDARD);
+                    System.out.println("MADE ANCHOR");
+                }
+                return;
+            }
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+
 
         if(closestEnemy == null || carrierScore < 0){
             if(rc.getResourceAmount(ResourceType.ADAMANTIUM) >= Constants.MIN_ADAMANTIUM_STOP_MINERS && rc.getResourceAmount(ResourceType.MANA) >= Constants.MIN_MANA_STOP_MINERS){
@@ -37,6 +53,7 @@ public class Headquarters2 extends Robot{
                     if (constructRobotGreedy(RobotType.CARRIER, explore.closestAdamantium)) {
                         comm.reportBuilt(RobotType.CARRIER, updateCarrierScore(carrierScore) + Util.getMinMiners());
                         carrierRound = rc.getRoundNum();
+                        return;
                     }
                 }
             }
@@ -74,6 +91,10 @@ public class Headquarters2 extends Robot{
     int updateCarrierScore(int oldScore){
         if (oldScore <= 0) return oldScore + 1;
         return oldScore +3;
+    }
+
+    int updateAmplifierScore(int oldScore){
+        return oldScore+1;
     }
 
 }

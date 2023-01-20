@@ -19,18 +19,18 @@ public class Carrier extends Robot{
         if(getTotalResources() > 0){
             tryAttack(true);
         }
-        tryCollectResource();
-        tryDepositResource();
         tryCollectAnchor();
         tryDepositAnchor();
+        tryCollectResource();
+        tryDepositResource();
         moveToTarget();
         if(getTotalResources() > 0){
             tryAttack(false);
         }
-        tryCollectResource();
-        tryDepositResource();
         tryCollectAnchor();
         tryDepositAnchor();
+        tryCollectResource();
+        tryDepositResource();
     }
 
     void moveToTarget(){

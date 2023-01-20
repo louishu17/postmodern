@@ -15,9 +15,6 @@ public class Launcher extends Robot{
         if(comm.getBuildingScore(RobotType.LAUNCHER) % 3 == 1) explorer = true;
     }
     void play(){
-        if(explore.getClosestAdamantium() != null){
-            rc.setIndicatorString("ADAMANTIUM WELL: " + explore.getClosestAdamantium());
-        }
         checkChickenBehavior();
         tryAttack(true);
         tryMove();

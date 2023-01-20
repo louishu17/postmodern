@@ -19,20 +19,24 @@ public abstract class Robot {
     static Explore explore;
     static Communication comm;
 
+    static boolean isCarrier = false;
+
 
     public Robot(RobotController rc){
         this.rc = rc;
         bfs = new BFS(rc);
         explore = new Explore(rc);
         comm = new Communication(rc);
+        if(rc.getType() == RobotType.CARRIER) isCarrier = true;
     }
 
     abstract void play();
     void initTurn(){
         comm.reportSelf();
+        if(isCarrier) explore.reportResources();
     }
     void endTurn(){
-        explore.reportResources();
+        if(!isCarrier) explore.reportResources();
         explore.reportIslands();
         explore.reportUnits();
     }
