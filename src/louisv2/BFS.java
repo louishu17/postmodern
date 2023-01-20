@@ -1,6 +1,8 @@
-package louis;
+package louisv2;
 
-import battlecode.common.*;
+import battlecode.common.MapLocation;
+import battlecode.common.RobotController;
+import battlecode.common.RobotType;
 
 public class BFS {
     Pathfinding path;
