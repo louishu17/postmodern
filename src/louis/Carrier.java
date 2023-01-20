@@ -35,9 +35,6 @@ public class Carrier extends Robot{
 
     void moveToTarget(){
         MapLocation loc = getTarget();
-        if(checkIfNextToWell(loc)){
-            return;
-        }
         while(rc.isMovementReady()){
             bfs.move(loc);
         }
@@ -68,17 +65,6 @@ public class Carrier extends Robot{
         }
 
         return loc;
-    }
-
-    boolean checkIfNextToWell(MapLocation target){
-        MapLocation myLoc = rc.getLocation();
-        for(Direction dir: directions){
-            MapLocation newLoc = myLoc.add(dir);
-            if(newLoc.equals(target)){
-                return true;
-            }
-        }
-        return false;
     }
 
     MapLocation getClosestAdamantium(){
