@@ -1,8 +1,6 @@
-package louisv2;
+package louisv5;
 
-import battlecode.common.MapLocation;
-import battlecode.common.RobotController;
-import battlecode.common.RobotType;
+import battlecode.common.*;
 
 public class BFS {
     Pathfinding path;
@@ -20,12 +18,14 @@ public class BFS {
     }
 
     void move(MapLocation target){
-        if (target == null) return;
         if (!rc.isMovementReady()) return;
         if(micro.doMicro()) return;
+        if (target == null) return;
         if(rc.getLocation().distanceSquaredTo(target) == 0) return;
         path.move(target);
     }
+
+
 
 
 }

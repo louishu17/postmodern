@@ -1,4 +1,4 @@
-package louisv2;
+package louisv4;
 
 import battlecode.common.MapLocation;
 import battlecode.common.RobotController;
@@ -23,6 +23,7 @@ public class BFS {
         if (target == null) return;
         if (!rc.isMovementReady()) return;
         if(micro.doMicro()) return;
+        if(rc.getType() == RobotType.CARRIER )
         if(rc.getLocation().distanceSquaredTo(target) == 0) return;
         path.move(target);
     }

@@ -1,4 +1,4 @@
-package louisv2;
+package louisv4;
 
 import battlecode.common.MapLocation;
 import battlecode.common.RobotController;
@@ -44,14 +44,14 @@ public class Launcher extends Robot {
 
     MapLocation getBestTarget(){
         try{
-//            if(chickenBehavior){
-//                MapLocation ans = comm.getClosestAllyHeadquarter();
-//                if(ans != null){
-//                    int d = ans.distanceSquaredTo(rc.getLocation());
-//                    if (d <= RobotType.LAUNCHER.actionRadiusSquared) return rc.getLocation();
-//                    return ans;
-//                }
-//            }
+            if(chickenBehavior){
+                MapLocation ans = comm.getClosestAllyHeadquarter();
+                if(ans != null){
+                    int d = ans.distanceSquaredTo(rc.getLocation());
+                    if (d <= RobotType.LAUNCHER.actionRadiusSquared) return rc.getLocation();
+                    return ans;
+                }
+            }
             MoveTarget bestTarget = null;
             RobotInfo[] enemies = rc.senseNearbyRobots(rc.getLocation(), explore.myVisionRange, rc.getTeam().opponent());
             for(RobotInfo enemy: enemies){

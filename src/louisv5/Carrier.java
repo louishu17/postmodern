@@ -1,8 +1,8 @@
-package louis;
+package louisv5;
 
 import battlecode.common.*;
 
-public class Carrier extends Robot{
+public class Carrier extends Robot {
 
     int actionRadius;
 
@@ -35,11 +35,11 @@ public class Carrier extends Robot{
 
     void moveToTarget(){
         MapLocation loc = getTarget();
-        if(checkIfNextToWell(loc)){
-            return;
-        }
         while(rc.isMovementReady()){
             bfs.move(loc);
+            if(checkIfNextToWell(loc)){
+                return;
+            }
         }
     }
 
@@ -56,7 +56,7 @@ public class Carrier extends Robot{
                 }
                 else
                 {
-                    loc = getClosestMana();;
+                    loc = getClosestMana();
                     if (loc == null) loc = getClosestAdamantium();
 //                    if (loc == null) loc = explore.getClosestEnemyOccupiedIsland();
                     if (loc == null) return explore.getExploreTarget();
@@ -68,17 +68,6 @@ public class Carrier extends Robot{
         }
 
         return loc;
-    }
-
-    boolean checkIfNextToWell(MapLocation target){
-        MapLocation myLoc = rc.getLocation();
-        for(Direction dir: directions){
-            MapLocation newLoc = myLoc.add(dir);
-            if(newLoc.equals(target)){
-                return true;
-            }
-        }
-        return false;
     }
 
     MapLocation getClosestAdamantium(){
@@ -166,5 +155,16 @@ public class Carrier extends Robot{
 
     int getTotalResources(){
         return rc.getResourceAmount(ResourceType.ADAMANTIUM) + rc.getResourceAmount(ResourceType.MANA);
+    }
+
+    boolean checkIfNextToWell(MapLocation target){
+        MapLocation myLoc = rc.getLocation();
+        for(Direction dir: Robot.directions){
+            MapLocation newLoc = myLoc.add(dir);
+            if(newLoc.equals(target)){
+                return true;
+            }
+        }
+        return false;
     }
 }
