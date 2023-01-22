@@ -1,4 +1,4 @@
-package louisv2;
+package louisv3;
 
 import battlecode.common.MapLocation;
 import battlecode.common.RobotController;
@@ -7,12 +7,10 @@ import battlecode.common.RobotType;
 
 public class Launcher extends Robot {
 
-    boolean explorer;
 
     boolean chickenBehavior = false;
     Launcher(RobotController rc){
         super(rc);
-        if(comm.getBuildingScore(RobotType.LAUNCHER) % 3 == 1) explorer = true;
     }
     void play(){
         checkChickenBehavior();
@@ -37,7 +35,7 @@ public class Launcher extends Robot {
 //        }
         MapLocation target = getBestTarget();
         if(target != null) return target;
-        if(!explorer && target == null) target = comm.getClosestEnemyHeadquarters();
+        target = comm.getClosestEnemyHeadquarters();
         if(target != null) return target;
         return explore.getExploreTarget();
     }
