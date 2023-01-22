@@ -17,16 +17,20 @@ public class Carrier extends Robot {
     ResourceType[] resourceTypes = {ResourceType.ADAMANTIUM, ResourceType.MANA};
 
     int myID;
-    int resourceDesig; //if 0, goes for mana, if 1 goes for ad
+    int resourceDesig = -1; //if 0, goes for mana, if 1 goes for ad
 
     Carrier(RobotController rc) throws GameActionException{
         super(rc);
         actionRadius = rc.getType().actionRadiusSquared;
         myID = rc.getID();
-        resourceDesig = rc.readSharedArray(40)/4;
+        if(rc.readSharedArray(40) % 3 == 0) {
+            resourceDesig = 1;
+        } else {
+            resourceDesig = 0;
+        }
     }
     void play(){
-        /*if(rc.getRoundNum() <= 60) { //well queue only actively expanding in first 60 rounds
+        if(rc.getRoundNum() <= 60) { //well queue only actively expanding in first 60 rounds
             try {
                 rememberWells();
                 if(rc.canWriteSharedArray(20,20) && newAdWells.size() != 0 && newManaWells.size() != 0) { //everytime it gets within writing distance of the headquarters
@@ -46,7 +50,7 @@ public class Carrier extends Robot {
             } catch(Exception e) {
                 e.printStackTrace();
             }
-        }*/
+        }
         if(getTotalResources() > 0){
             tryAttack(true);
         }
@@ -92,6 +96,8 @@ public class Carrier extends Robot {
                     } else if(resourceDesig == 1) {
                         loc = getClosestAdamantium();
                     }
+                    /*loc = getClosestMana();
+                    if (loc == null) loc = getClosestAdamantium();*/
 //                    if (loc == null) loc = explore.getClosestEnemyOccupiedIsland();
                     if (loc == null) return explore.getExploreTarget();
                 }

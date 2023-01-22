@@ -62,6 +62,7 @@ public abstract class Robot {
             RobotInfo[] enemies = rc.senseNearbyRobots(rc.getType().actionRadiusSquared, rc.getTeam().opponent());
             AttackTarget bestTarget = null;
             for (RobotInfo enemy : enemies) {
+                if(enemy.getType() == RobotType.HEADQUARTERS) continue;
                 if (onlyAttackers && !Util.isAttacker(enemy.getType())) continue;
                 if (rc.canAttack(enemy.location)) {
                     AttackTarget at = new AttackTarget(enemy);

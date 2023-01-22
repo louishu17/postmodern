@@ -358,7 +358,7 @@ public class Communication {
         MapLocation loc = null;
         while(i++ < 4) {
             int codeLoc = rc.readSharedArray(i * 2 + 10);
-            if(rc.getLocation().distanceSquaredTo(Util.getLocation(codeLoc)) < closestDist) {
+            if(codeLoc != 0 && rc.getLocation().distanceSquaredTo(Util.getLocation(codeLoc)) < closestDist) {
                 loc = Util.getLocation(codeLoc);
             }
         }
@@ -370,7 +370,7 @@ public class Communication {
         MapLocation loc = null;
         while(i++ < 4) {
             int codeLoc = rc.readSharedArray(i * 2 + 10);
-            if(rc.getLocation().distanceSquaredTo(Util.getLocation(codeLoc)) < closestDist) {
+            if(codeLoc != 0 && rc.getLocation().distanceSquaredTo(Util.getLocation(codeLoc)) < closestDist) {
                 loc = Util.getLocation(codeLoc);
             }
         }

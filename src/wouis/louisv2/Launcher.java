@@ -31,7 +31,10 @@ public class Launcher extends Robot {
     }
 
     MapLocation getTarget(){
-        if(comm.isEnemyTerritoryRadial(rc.getLocation())) return comm.getClosestAllyHeadquarter();
+//        if(comm.isEnemyTerritoryRadial(rc.getLocation())){
+//            rc.setIndicatorString("IM IN ENEMY TERRITORY RADIAL");
+//            return comm.getClosestAllyHeadquarter();
+//        }
         MapLocation target = getBestTarget();
         if(target != null) return target;
         if(!explorer && target == null) target = comm.getClosestEnemyHeadquarters();
@@ -41,21 +44,28 @@ public class Launcher extends Robot {
 
     MapLocation getBestTarget(){
         try{
-            if(chickenBehavior){
-                MapLocation ans = comm.getClosestAllyHeadquarter();
-                if(ans != null){
-                    int d = ans.distanceSquaredTo(rc.getLocation());
-                    if (d <= RobotType.LAUNCHER.actionRadiusSquared) return rc.getLocation();
-                    return ans;
-                }
-            }
+//            if(chickenBehavior){
+//                MapLocation ans = comm.getClosestAllyHeadquarter();
+//                if(ans != null){
+//                    int d = ans.distanceSquaredTo(rc.getLocation());
+//                    if (d <= RobotType.LAUNCHER.actionRadiusSquared) return rc.getLocation();
+//                    return ans;
+//                }
+//            }
             MoveTarget bestTarget = null;
             RobotInfo[] enemies = rc.senseNearbyRobots(rc.getLocation(), explore.myVisionRange, rc.getTeam().opponent());
             for(RobotInfo enemy: enemies){
                 MoveTarget mt = new MoveTarget(enemy);
                 if (mt.isBetterThan(bestTarget)) bestTarget = mt;
             }
-            if (bestTarget != null) return bestTarget.mloc;
+            if (bestTarget != null)
+            {
+                if(bestTarget.type == RobotType.HEADQUARTERS && bestTarget.mloc.isWithinDistanceSquared(rc.getLocation(),RobotType.HEADQUARTERS.actionRadiusSquared+25)){
+                    return rc.getLocation();
+                }else{
+                    return bestTarget.mloc;
+                }
+            }
         }catch(Exception e){
             e.printStackTrace();
         }

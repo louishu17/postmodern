@@ -21,7 +21,6 @@ public class Headquarters2 extends Robot {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
         }
         int i = 5;
         try {
