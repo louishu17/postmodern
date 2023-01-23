@@ -17,19 +17,38 @@ public class Carrier extends Robot {
     ResourceType[] resourceTypes = {ResourceType.ADAMANTIUM, ResourceType.MANA};
 
     int myID;
-    int resourceDesig = -1; //if 0, goes for mana, if 1 goes for ad
+
+    boolean goingForMana;
 
     Carrier(RobotController rc) throws GameActionException{
         super(rc);
         actionRadius = rc.getType().actionRadiusSquared;
         myID = rc.getID();
-        if(rc.readSharedArray(40) % 3 == 0) {
-            resourceDesig = 1;
-        } else {
-            resourceDesig = 0;
+        checkResourceBehavior();
+    }
+
+    void checkResourceBehavior(){
+        try{
+            int carrierIndex = rc.readSharedArray(comm.CARRIER_COUNT);
+            if(carrierIndex % 2 == 1) {
+                goingForMana = true;
+            }
+            else{
+                goingForMana = false;
+            }
+            comm.increaseIndex(comm.CARRIER_COUNT, 1);
+        }catch(Exception e){
+            e.printStackTrace();
         }
     }
     void play(){
+        if(goingForMana)
+        {
+            rc.setIndicatorString("MANA COLLECTOR");
+        }else{
+            rc.setIndicatorString("ADAMANTIUM COLLECTOR");
+        }
+
         if(rc.getRoundNum() <= 60) { //well queue only actively expanding in first 60 rounds
             memoryWells();
         }
@@ -96,11 +115,11 @@ public class Carrier extends Robot {
                 }
                 else
                 {
-//                    if(resourceDesig == 0) {
+                    if(goingForMana) {
                         loc = getClosestMana();
-//                    } else if(resourceDesig == 1) {
-                    if(loc == null) loc = getClosestAdamantium();
-//                    }
+                    } else {
+                        loc = getClosestAdamantium();
+                    }
                     /*loc = getClosestMana();
                     if (loc == null) loc = getClosestAdamantium();*/
 //                    if (loc == null) loc = explore.getClosestEnemyOccupiedIsland();
@@ -134,7 +153,7 @@ public class Carrier extends Robot {
     MapLocation getClosestAdamantium() throws GameActionException{
         MapLocation ans = explore.getClosestAdamantium();
         if(ans == null) ans = comm.getClosestAdamantium();
-        System.out.println("ADAMANTIUM: " + ans);
+//        System.out.println("ADAMANTIUM: " + ans);
         return ans;
     }
     MapLocation getClosestMana() throws GameActionException{

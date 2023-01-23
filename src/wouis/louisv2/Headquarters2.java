@@ -34,6 +34,15 @@ public class Headquarters2 extends Robot {
 
     void buildUnit() throws GameActionException{
         if(!rc.isActionReady()) return;
+        if(rc.getRoundNum() < 5){
+            if(rc.getResourceAmount(ResourceType.MANA) >= 30 && constructRobotGreedy(RobotType.LAUNCHER, comm.getClosestEnemyHeadquarters())){
+                comm.reportBuilt(RobotType.LAUNCHER, updateLauncherScore(launcherScore));
+            }else{
+                if(constructRobotGreedy(RobotType.CARRIER,explore.closestAdamantium)){
+                    comm.reportBuilt(RobotType.CARRIER, updateCarrierScore(carrierScore));
+                }
+            }
+        }
         computeClosestEnemy();
         if(closestEnemy != null){
             if(rc.getRoundNum() > 5) comm.activateDanger();
@@ -56,14 +65,15 @@ public class Headquarters2 extends Robot {
             if(rc.getResourceAmount(ResourceType.ADAMANTIUM) >= Constants.MIN_ADAMANTIUM_STOP_MINERS && rc.getResourceAmount(ResourceType.MANA) >= Constants.MIN_MANA_STOP_MINERS){
                 if(carrierScore <= launcherScore){
                     comm.reportBuilt(RobotType.CARRIER, updateCarrierScore(carrierScore) + Util.getMinMiners());
-                    rc.writeSharedArray(40,rc.readSharedArray(40) + 1); //index in the array that stores carriers made
+//                    rc.writeSharedArray(40,rc.readSharedArray(40) + 1); //index in the array that stores carriers made
+                    return;
                 }
             } else {
                 if (((explore.visibleMana || explore.visibleAdamantium) && rc.getRoundNum() - carrierRound > CARRIER_WAITING) || carrierScore <= launcherScore) {
                     if (constructRobotGreedy(RobotType.CARRIER, explore.closestAdamantium)) {
                         comm.reportBuilt(RobotType.CARRIER, updateCarrierScore(carrierScore) + Util.getMinMiners());
                         carrierRound = rc.getRoundNum();
-                        rc.writeSharedArray(40,rc.readSharedArray(40) + 1);
+//                        rc.writeSharedArray(40,rc.readSharedArray(40) + 1);
                         return;
                     }
                 }

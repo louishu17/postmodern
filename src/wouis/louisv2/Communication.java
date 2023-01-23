@@ -36,6 +36,10 @@ public class Communication {
 
     static final int INF_COMM = (1 << 16) - 1;
 
+    int horizontalSymmetry;
+    int verticalSymmetry;
+    int rotationSymmetry;
+
 
     Communication(RobotController rc) {
         this.rc = rc;
@@ -45,6 +49,10 @@ public class Communication {
         if(headquarter) setHeadquartersLoc();
         mapWidth = rc.getMapWidth();
         mapHeight = rc.getMapHeight();
+        horizontalSymmetry = 0;
+        verticalSymmetry = 0;
+        rotationSymmetry = 0;
+
     }
 
     void setHeadquartersLoc(){
@@ -174,17 +182,33 @@ public class Communication {
     }
 
     MapLocation getClosestEnemyHeadquarters(){
-        try{
+        try {
             MapLocation myLoc = rc.getLocation();
             MapLocation ans = null;
             int bestDist = 0;
             int i = rc.readSharedArray(HEADQUARTERS_NB_INDEX);
-            int hSym = rc.readSharedArray(H_SYM);
+            int hSym = 0;
+            if(horizontalSymmetry != 0){
+                hSym = horizontalSymmetry;
+            }else{
+                hSym = rc.readSharedArray(H_SYM);
+            }
             boolean updateh = false;
-            int vSym = rc.readSharedArray(V_SYM);
+            int vSym = 0;
+            if(verticalSymmetry != 0){
+                vSym = verticalSymmetry;
+            }else{
+                vSym = rc.readSharedArray(V_SYM);
+            }
             boolean updatev = false;
-            int rSym = rc.readSharedArray(R_SYM);
+            int rSym = 0;
+            if(rotationSymmetry != 0){
+                rSym = rotationSymmetry;
+            }else{
+                rSym = rc.readSharedArray(R_SYM);
+            }
             boolean updater = false;
+            boolean updateSymmetries = rc.getRoundNum() <= 5;
             while (i-- > 0){
                 MapLocation newLoc = Util.getLocation(rc.readSharedArray(HEADQUARTERS_LOC_INDEX + i));
                 if ((hSym&1) == 0 && (hSym & (1 << (i+1))) == 0){
@@ -194,10 +218,14 @@ public class Communication {
                         if (r == null || r.getType() != RobotType.HEADQUARTERS || r.getTeam() != rc.getTeam().opponent()){
                             hSym += (1 << (i+1));
                             updateh = true;
+                            if (updateSymmetries){
+                                hSym +=1;
+                                System.out.println("Not Horizontal!");
+                            }
                         }
                     }
                     int d = myLoc.distanceSquaredTo(symLoc);
-                    if (ans == null || d < bestDist){
+                    if (ans == null || bestDist > d){
                         bestDist = d;
                         ans = symLoc;
                     }
@@ -209,10 +237,14 @@ public class Communication {
                         if (r == null || r.getType() != RobotType.HEADQUARTERS || r.getTeam() != rc.getTeam().opponent()){
                             vSym += (1 << (i+1));
                             updatev = true;
+                            if (updateSymmetries){
+                                vSym += 1;
+                                System.out.println("Not Vertical!");
+                            }
                         }
                     }
                     int d = myLoc.distanceSquaredTo(symLoc);
-                    if (ans == null || d < bestDist){
+                    if (ans == null || bestDist > d){
                         bestDist = d;
                         ans = symLoc;
                     }
@@ -223,30 +255,37 @@ public class Communication {
                         if (r == null || r.getType() != RobotType.HEADQUARTERS || r.getTeam() != rc.getTeam().opponent()){
                             rSym += (1 << (i+1));
                             updater = true;
+                            if (updateSymmetries){
+                                rSym += 1;
+                                System.out.println("Not Rotational!");
+                            }
                         }
                     }
                     int d = myLoc.distanceSquaredTo(symLoc);
-                    if (ans == null || d < bestDist){
+                    if (ans == null || bestDist > d){
                         bestDist = d;
                         ans = symLoc;
                     }
                 }
             }
-            if (rc.canWriteSharedArray(H_SYM,hSym) && updateh){
-                rc.writeSharedArray(H_SYM, hSym);
+            if (updateh){
+                if(rc.canWriteSharedArray(H_SYM, hSym)) rc.writeSharedArray(H_SYM, hSym);
+                horizontalSymmetry = hSym;
             }
-            if (rc.canWriteSharedArray(V_SYM,vSym) && updatev) {
-                rc.writeSharedArray(V_SYM, vSym);
+            if (updatev){
+                if(rc.canWriteSharedArray(V_SYM, vSym)) rc.writeSharedArray(V_SYM, vSym);
+                verticalSymmetry = vSym;
             }
-            if (rc.canWriteSharedArray(R_SYM, rSym) && updater){
-                rc.writeSharedArray(R_SYM, rSym);
+            if (updater){
+                if(rc.canWriteSharedArray(R_SYM, rSym)) rc.writeSharedArray(R_SYM, rSym);
+                rotationSymmetry = rSym;
             }
             return ans;
-
-        }catch(Exception e){
+        } catch (Exception e){
             e.printStackTrace();
         }
         return null;
+
     }
     MapLocation getClosestAllyHeadquarter(){
         MapLocation ans = null;

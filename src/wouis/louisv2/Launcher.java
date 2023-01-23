@@ -12,13 +12,24 @@ public class Launcher extends Robot {
     boolean chickenBehavior = false;
     Launcher(RobotController rc){
         super(rc);
-        if(comm.getBuildingScore(RobotType.LAUNCHER) % 3 == 1) explorer = true;
+        checkExploreBehavior();
     }
     void play(){
+        if(explorer) rc.setIndicatorString("I'm an Explorer!");
         checkChickenBehavior();
         tryAttack(true);
         tryMove();
         tryAttack(false);
+    }
+
+    void checkExploreBehavior(){
+        try{
+            int launcherIndex = rc.readSharedArray(comm.LAUNCHER_COUNT);
+            if(launcherIndex % 3 == 2) explorer = true;
+            comm.increaseIndex(comm.LAUNCHER_COUNT, 1);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
     }
 
     void tryMove(){
