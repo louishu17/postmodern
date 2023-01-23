@@ -30,7 +30,6 @@ public class Communication {
     int mapWidth, mapHeight;
 
     static int myID;
-    static int myHeadquartersIndex = -1;
     static boolean headquarter = false;
     static boolean soldier = false;
 
@@ -57,21 +56,21 @@ public class Communication {
 
     void setHeadquartersLoc(){
         try{
-            int i = MAX_HEADQUARTERS;
-            while(i-- > 0){
-                ++myHeadquartersIndex;
-                if(rc.readSharedArray(HEADQUARTERS_LOC_INDEX + myHeadquartersIndex) == 0) {
-                    rc.writeSharedArray(HEADQUARTERS_LOC_INDEX + myHeadquartersIndex, Util.encodeLoc(rc.getLocation()));
+            int i = -1;
+            while(i++ < 3){
+                if(rc.readSharedArray(HEADQUARTERS_LOC_INDEX + i) == 0) {
+                    //System.out.println(rc.readSharedArray(HEADQUARTERS_LOC_INDEX + i));
+                    rc.writeSharedArray(HEADQUARTERS_LOC_INDEX + i, Util.encodeLoc(rc.getLocation()));
                 }
                 break;
             }
-            rc.writeSharedArray(HEADQUARTERS_NB_INDEX, myHeadquartersIndex+1);
+            rc.writeSharedArray(HEADQUARTERS_NB_INDEX, rc.readSharedArray(HEADQUARTERS_NB_INDEX) + 1);
         }catch(Exception e){
             e.printStackTrace();
         }
     }
     //only headquarters
-    void reportSelf(){
+    /*void reportSelf(){
         try{
             if(headquarter){
                 int locCode = Util.encodeLoc(rc.getLocation());
@@ -81,7 +80,7 @@ public class Communication {
         }catch(Exception e){
             e.printStackTrace();
         }
-    }
+    }*/
 
     /**
      * The parameter is a locally stored array of Adamantium wells.
@@ -289,7 +288,7 @@ public class Communication {
     }
     MapLocation getClosestAllyHeadquarter(){
         MapLocation ans = null;
-        int bestDist = 0;
+        int bestDist = 10000;
         MapLocation myLoc = rc.getLocation();
         try {
             RobotInfo[] allies = rc.senseNearbyRobots(myLoc, rc.getType().visionRadiusSquared, rc.getTeam());
@@ -303,9 +302,10 @@ public class Communication {
             }
             if (ans != null) return ans;
 
-            int i = rc.readSharedArray(HEADQUARTERS_NB_INDEX);
-            while (i-- > 0) {
-                MapLocation newLoc = Util.getLocation(rc.readSharedArray(3 * i + 1));
+            int i = -1;
+            while (i++ < rc.readSharedArray(HEADQUARTERS_NB_INDEX) - 1) {
+                MapLocation newLoc = Util.getLocation(rc.readSharedArray(HEADQUARTERS_LOC_INDEX + i));
+                System.out.println(newLoc);
                 int d = myLoc.distanceSquaredTo(newLoc);
                 if (ans == null || bestDist > d) {
                     bestDist = d;

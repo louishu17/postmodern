@@ -33,7 +33,7 @@ public abstract class Robot {
 
     abstract void play();
     void initTurn(){
-        comm.reportSelf();
+        //comm.reportSelf();
         if(isCarrier) explore.reportResources();
     }
     void endTurn(){

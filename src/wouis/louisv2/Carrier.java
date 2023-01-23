@@ -49,7 +49,7 @@ public class Carrier extends Robot {
             rc.setIndicatorString("ADAMANTIUM COLLECTOR");
         }
 
-        if(rc.getRoundNum() <= 60) { //well queue only actively expanding in first 60 rounds
+        if(rc.getRoundNum() <= 100) { //well queue only actively expanding in first 60 rounds
             memoryWells();
         }
         if(getTotalResources() > 0){
@@ -111,7 +111,8 @@ public class Carrier extends Robot {
                 if(loc == null) return explore.getExploreTarget();
             }else{
                 if(totalResources == GameConstants.CARRIER_CAPACITY){
-                    loc = explore.getClosestMyHeadquarters();
+                    loc = comm.getClosestAllyHeadquarter();
+                    //rc.setIndicatorString("HAVE A HQ IN MIND: " + loc);
                 }
                 else
                 {
@@ -127,7 +128,7 @@ public class Carrier extends Robot {
                     if (loc == null){
                         return explore.getExploreTarget();
                     }else{
-                        rc.setIndicatorString("HAVE A WELL IN MIND: " + loc);
+                        //rc.setIndicatorString("HAVE A WELL IN MIND: " + loc);
                     }
                 }
             }

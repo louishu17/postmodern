@@ -34,7 +34,7 @@ public class Headquarters2 extends Robot {
             if(rc.getRoundNum() > 1500 && rc.getNumAnchors(Anchor.STANDARD) < rc.getIslandCount()){
                 if (rc.getResourceAmount(ResourceType.ADAMANTIUM) >= 100 && rc.getResourceAmount(ResourceType.MANA) >= 100) {
                     rc.buildAnchor(Anchor.STANDARD);
-                    System.out.println("MADE ANCHOR");
+                    //System.out.println("MADE ANCHOR");
                 }
                 return;
             }
