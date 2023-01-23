@@ -31,25 +31,7 @@ public class Carrier extends Robot {
     }
     void play(){
         if(rc.getRoundNum() <= 60) { //well queue only actively expanding in first 60 rounds
-            try {
-                rememberWells();
-                if(rc.canWriteSharedArray(20,20) && newAdWells.size() != 0 && newManaWells.size() != 0) { //everytime it gets within writing distance of the headquarters
-                    Integer[] adWells = newAdWells.toArray(new Integer[newAdWells.size()]);
-                    comm.reportAdamantium(adWells);
-                    Integer[] manaWells = newManaWells.toArray(new Integer[newManaWells.size()]);
-                    comm.reportMana(manaWells);
-                    for(Integer adWell: newAdWells) {
-                        oldAdWells.add(adWell);
-                    }
-                    for(Integer manaWell: newManaWells) {
-                        oldManaWells.add(manaWell);
-                    }
-                    newAdWells.clear();
-                    oldAdWells.clear();
-                }
-            } catch(Exception e) {
-                e.printStackTrace();
-            }
+            memoryWells();
         }
         if(getTotalResources() > 0){
             tryAttack(true);
@@ -68,11 +50,34 @@ public class Carrier extends Robot {
         tryDepositResource();
     }
 
+    void memoryWells(){
+        try {
+            rememberWells();
+            if(rc.canWriteSharedArray(20,20) && newAdWells.size() != 0 && newManaWells.size() != 0) { //everytime it gets within writing distance of the headquarters
+                Integer[] adWells = newAdWells.toArray(new Integer[newAdWells.size()]);
+                comm.reportAdamantium(adWells);
+                Integer[] manaWells = newManaWells.toArray(new Integer[newManaWells.size()]);
+                comm.reportMana(manaWells);
+                for(Integer adWell: newAdWells) {
+                    oldAdWells.add(adWell);
+                }
+                for(Integer manaWell: newManaWells) {
+                    oldManaWells.add(manaWell);
+                }
+                newAdWells.clear();
+                oldAdWells.clear();
+            }
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     void moveToTarget(){
         MapLocation loc = getTarget();
         if(checkIfNextToWell(loc)){
             return;
         }
+        rc.setIndicatorLine(rc.getLocation(),loc,0,0,255);
         while(rc.isMovementReady()){
             bfs.move(loc);
         }
@@ -91,15 +96,20 @@ public class Carrier extends Robot {
                 }
                 else
                 {
-                    if(resourceDesig == 0) {
+//                    if(resourceDesig == 0) {
                         loc = getClosestMana();
-                    } else if(resourceDesig == 1) {
-                        loc = getClosestAdamantium();
-                    }
+//                    } else if(resourceDesig == 1) {
+                    if(loc == null) loc = getClosestAdamantium();
+//                    }
                     /*loc = getClosestMana();
                     if (loc == null) loc = getClosestAdamantium();*/
 //                    if (loc == null) loc = explore.getClosestEnemyOccupiedIsland();
-                    if (loc == null) return explore.getExploreTarget();
+
+                    if (loc == null){
+                        return explore.getExploreTarget();
+                    }else{
+                        rc.setIndicatorString("HAVE A WELL IN MIND: " + loc);
+                    }
                 }
             }
         }
@@ -124,11 +134,13 @@ public class Carrier extends Robot {
     MapLocation getClosestAdamantium() throws GameActionException{
         MapLocation ans = explore.getClosestAdamantium();
         if(ans == null) ans = comm.getClosestAdamantium();
+        System.out.println("ADAMANTIUM: " + ans);
         return ans;
     }
     MapLocation getClosestMana() throws GameActionException{
         MapLocation ans = explore.getClosestMana();
         if(ans == null) ans = comm.getClosestMana();
+//        System.out.println("MANA: " + ans);
         return ans;
     }
 

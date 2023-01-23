@@ -35,11 +35,9 @@ public class Carrier extends Robot {
 
     void moveToTarget(){
         MapLocation loc = getTarget();
-        while(rc.isMovementReady()){
+        int i=2;
+        while(i-- >= 0){
             bfs.move(loc);
-            if(checkIfNextToWell(loc)){
-                return;
-            }
         }
     }
 

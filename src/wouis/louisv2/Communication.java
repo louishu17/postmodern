@@ -14,7 +14,7 @@ public class Communication {
     static final int MANA_QUEUE_SIZE = 9;
 
 
-    static final int HEADQUARTERS_NB_INDEX = 14;
+    static final int HEADQUARTERS_NB_INDEX = 45;
     static final int HEADQUARTERS_CARRIERS_MADE = 40;
     static final int BUILDING_QUEUE_INDEX = 54;
     static final int HEADQUARTERS_LOC_INDEX = 41;
@@ -357,9 +357,10 @@ public class Communication {
         int closestDist = 10000;
         MapLocation loc = null;
         while(i++ < 4) {
-            int codeLoc = rc.readSharedArray(i * 2 + 10);
+            int codeLoc = rc.readSharedArray(i * 2);
             if(codeLoc != 0 && rc.getLocation().distanceSquaredTo(Util.getLocation(codeLoc)) < closestDist) {
                 loc = Util.getLocation(codeLoc);
+                closestDist = rc.getLocation().distanceSquaredTo(Util.getLocation(codeLoc));
             }
         }
         return loc;
@@ -372,6 +373,7 @@ public class Communication {
             int codeLoc = rc.readSharedArray(i * 2 + 10);
             if(codeLoc != 0 && rc.getLocation().distanceSquaredTo(Util.getLocation(codeLoc)) < closestDist) {
                 loc = Util.getLocation(codeLoc);
+                closestDist = rc.getLocation().distanceSquaredTo(Util.getLocation(codeLoc));
             }
         }
         return loc;

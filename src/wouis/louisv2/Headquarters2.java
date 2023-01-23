@@ -15,7 +15,7 @@ public class Headquarters2 extends Robot {
     }
 
     void play() {
-        if(rc.getRoundNum() == 1) {
+        if(rc.getRoundNum() < 5) {
             try{
                 reportResources();
             } catch (Exception e) {

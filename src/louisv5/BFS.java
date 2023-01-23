@@ -21,6 +21,7 @@ public class BFS {
         if (!rc.isMovementReady()) return;
         if(micro.doMicro()) return;
         if (target == null) return;
+        rc.setIndicatorString("BYTECODES USED: " + Clock.getBytecodeNum());
         if(rc.getLocation().distanceSquaredTo(target) == 0 || (rc.getType() == RobotType.CARRIER && checkIfNextToWell(target) && getTotalResources() < GameConstants.CARRIER_CAPACITY)) return;
         path.move(target);
     }

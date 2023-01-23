@@ -15,8 +15,6 @@ public class MicroAttackers extends Micro {
     static int myVisionRange;
     static double myDPS;
 
-    boolean severelyHurt = false;
-
     double[] DPS = new double[]{0,0,0,0,0,0};
     int[] rangeExtended = new int[]{0, 0, 0, 0,0,0, 0};
 
@@ -42,7 +40,6 @@ public class MicroAttackers extends Micro {
         try{
             if (!rc.isMovementReady()) return false;
             shouldPlaySafe = false;
-            severelyHurt = Util.hurt(rc.getHealth());
             RobotInfo[] units = rc.senseNearbyRobots(myVisionRange, rc.getTeam().opponent());
             canAttack = rc.isActionReady();
 
@@ -60,7 +57,6 @@ public class MicroAttackers extends Micro {
 
             alwaysInRange = false;
             if(!canAttack) alwaysInRange = true;
-            if(severelyHurt) alwaysInRange = true;
 
             MicroInfo[] microInfo = new MicroInfo[9];
             for (int i = 0; i < 9; ++i) microInfo[i] = new MicroInfo(dirs[i]);
@@ -184,10 +180,8 @@ public class MicroAttackers extends Micro {
             if (inRange() && !M.inRange()) return true;
             if (!inRange() && M.inRange()) return false;
 
-            if(!severelyHurt){
-                if (alliesTargeting > M.alliesTargeting) return true;
-                if (alliesTargeting < M.alliesTargeting) return false;
-            }
+            if (alliesTargeting > M.alliesTargeting) return true;
+            if (alliesTargeting < M.alliesTargeting) return false;
 
             if (inRange()) return minDistanceToEnemy >= M.minDistanceToEnemy;
             else return minDistanceToEnemy <= M.minDistanceToEnemy;

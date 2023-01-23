@@ -39,6 +39,12 @@ public class Pathfinding {
 
     boolean canMove(Direction dir){
         if (!rc.canMove(dir)) return false;
+        try{
+            MapLocation newLoc = rc.getLocation().add(dir);
+            if (!rc.onTheMap(newLoc) || (rc.senseMapInfo(newLoc).getCurrentDirection() != Direction.CENTER && rc.senseMapInfo(newLoc).getCurrentDirection() == getOppositeDirection(dir))) return false;
+        }catch(Exception e){
+            e.printStackTrace();
+        }
 //        if (impassable[dir.ordinal()]) return false;
         return true;
     }
@@ -59,8 +65,6 @@ public class Pathfinding {
         BugNav(){}
 
         final int INF = 1000000;
-        final int MAX_MAP_SIZE = GameConstants.MAP_MAX_HEIGHT;
-
         boolean rotateRight = true; //if I should rotate right or left
         MapLocation lastObstacleFound = null; //latest obstacle I've found in my way
         int minDistToEnemy = INF; //minimum distance I've been to the enemy while going around an obstacle
@@ -91,6 +95,7 @@ public class Pathfinding {
 
                 for (int i = 0; i < 8; i++) {
                     if (canMove(dir)) {
+                        rc.setIndicatorString("MOVING TOWARD " + dir);
                         rc.move(dir);
                         return true;
                     }
@@ -122,6 +127,28 @@ public class Pathfinding {
             int bit = rotateRight ? 1 : 0;
             return (((((x << 6) | y) << 4) | obstacleDir.ordinal()) << 1) | bit;
         }
+    }
+
+    Direction getOppositeDirection(Direction dir){
+        switch(dir){
+            case NORTH:
+                return Direction.SOUTH;
+            case NORTHEAST:
+                return Direction.SOUTHWEST;
+            case EAST:
+                return Direction.WEST;
+            case SOUTHEAST:
+                return Direction.NORTHWEST;
+            case SOUTH:
+                return Direction.NORTH;
+            case SOUTHWEST:
+                return Direction.NORTHEAST;
+            case WEST:
+                return Direction.EAST;
+            case NORTHWEST:
+                return Direction.SOUTHEAST;
+        }
+        return null;
     }
 
 
