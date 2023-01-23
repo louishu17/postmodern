@@ -36,7 +36,6 @@ public abstract class Robot {
         //comm.reportSelf();
         if(rc.getType() == RobotType.HEADQUARTERS && rc.getRoundNum() < 10) {
             try{
-                System.out.println("I AM A HQ AND I JUST REPORTED SHIT!");
                 reportResources();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -79,6 +78,13 @@ public abstract class Robot {
             }
             if (bestTarget != null && rc.canAttack(bestTarget.mloc)) {
                 rc.attack(bestTarget.mloc);
+                return;
+            }
+            if(rc.getType() == RobotType.LAUNCHER && bestTarget == null){
+                MapLocation[] cloudLocs = rc.senseNearbyCloudLocations(rc.getType().actionRadiusSquared);
+                if(cloudLocs.length > 0){
+                    rc.attack(cloudLocs[0]);
+                }
             }
         }catch(Exception e){
             e.printStackTrace();

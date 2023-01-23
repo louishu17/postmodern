@@ -6,7 +6,7 @@ import battlecode.common.RobotInfo;
 
 public class MicroCarriers extends Micro {
     Pathfinding path;
-    static final int FLEE_STRIDE = 20;
+    static final int FLEE_STRIDE = 50;
     MicroCarriers(RobotController rc){
         super(rc);
         path = new Pathfinding(rc);
