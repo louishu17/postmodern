@@ -1,4 +1,4 @@
-package wouis.louisv2;
+package wouis.louisv3;
 
 import battlecode.common.*;
 
@@ -34,14 +34,6 @@ public abstract class Robot {
     abstract void play();
     void initTurn(){
         //comm.reportSelf();
-        if(rc.getType() == RobotType.HEADQUARTERS && rc.getRoundNum() < 10) {
-            try{
-                System.out.println("I AM A HQ AND I JUST REPORTED SHIT!");
-                reportResources();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
         if(isCarrier) explore.reportResources();
     }
     void endTurn(){
@@ -85,38 +77,32 @@ public abstract class Robot {
         }
     }
 
-
-    MapLocation getClosestAdamantium() throws GameActionException{
-        MapLocation ans = explore.getClosestAdamantium();
-        if(ans == null) ans = comm.getClosestAdamantium();
-//        System.out.println("ADAMANTIUM: " + ans);
-        return ans;
-    }
-    MapLocation getClosestMana() throws GameActionException{
-        MapLocation ans = explore.getClosestMana();
-        if(ans == null) ans = comm.getClosestMana();
-//        System.out.println("MANA: " + ans);
-        return ans;
+    boolean constructRobotGreedy(RobotType t){
+        return constructRobotGreedy(t, null);
     }
 
-    void reportResources() throws GameActionException{
-        WellInfo[] adWells = rc.senseNearbyWells(ResourceType.ADAMANTIUM);
-        WellInfo[] manaWells = rc.senseNearbyWells(ResourceType.MANA);
-        Integer[] adWellLocs = new Integer[adWells.length];
-        Integer[] manaWellLocs = new Integer[manaWells.length];
-
-        int i = 0;
-        for(WellInfo adWell: adWells) {
-            adWellLocs[i] = Util.encodeLoc(adWell.getMapLocation());
-            i++;
+    boolean constructRobotGreedy(RobotType t, MapLocation target){
+        try {
+            MapLocation myLoc = rc.getLocation();
+            Direction bestDir = null;
+            int leastEstimation = 0;
+            for (Direction d : directions) {
+                if (!rc.canBuildRobot(t,myLoc.add(d))) continue;
+                int e = 1000000;
+                if (target != null) e = myLoc.add(d).distanceSquaredTo(target);
+                if (bestDir == null || e < leastEstimation){
+                    leastEstimation = e;
+                    bestDir = d;
+                }
+            }
+            if (bestDir != null){
+                if (rc.canBuildRobot(t, myLoc.add(bestDir))) rc.buildRobot(t, myLoc.add(bestDir));
+                return true;
+            }
+        } catch (Exception e){
+            e.printStackTrace();
         }
-        int j = 0;
-        for(WellInfo manaWell: manaWells) {
-            manaWellLocs[j] = Util.encodeLoc(manaWell.getMapLocation());
-            j++;
-        }
-        comm.reportAdamantium(adWellLocs);
-        comm.reportMana(manaWellLocs);
+        return false;
     }
 
     class AttackTarget{

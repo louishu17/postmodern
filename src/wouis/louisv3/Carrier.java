@@ -1,8 +1,7 @@
-package wouis.louisv2;
+package wouis.louisv3;
 
 import battlecode.common.*;
 
-import java.sql.SQLOutput;
 import java.util.HashSet;
 
 public class Carrier extends Robot {
@@ -149,6 +148,19 @@ public class Carrier extends Robot {
             }
         }
         return false;
+    }
+
+    MapLocation getClosestAdamantium() throws GameActionException{
+        MapLocation ans = explore.getClosestAdamantium();
+        if(ans == null) ans = comm.getClosestAdamantium();
+//        System.out.println("ADAMANTIUM: " + ans);
+        return ans;
+    }
+    MapLocation getClosestMana() throws GameActionException{
+        MapLocation ans = explore.getClosestMana();
+        if(ans == null) ans = comm.getClosestMana();
+//        System.out.println("MANA: " + ans);
+        return ans;
     }
 
     void tryCollectAnchor(){

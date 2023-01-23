@@ -1,10 +1,11 @@
-package wouis.louisv2;
+package wouis.louisv3;
 
 import battlecode.common.*;
 
 public class Headquarters2 extends Robot {
     int carrierScore;
     int launcherScore;
+    int amplifierScore;
     int carrierRound = 0;
     final int CARRIER_WAITING = 20;
 
@@ -14,6 +15,13 @@ public class Headquarters2 extends Robot {
     }
 
     void play() {
+        if(rc.getRoundNum() < 5) {
+            try{
+                reportResources();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
         int i = 5;
         try {
             while(i-- >= 0){
@@ -27,14 +35,11 @@ public class Headquarters2 extends Robot {
     void buildUnit() throws GameActionException{
         if(!rc.isActionReady()) return;
         if(rc.getRoundNum() < 5){
-            if(rc.getResourceAmount(ResourceType.MANA) >= 60 && constructRobotGreedy(RobotType.LAUNCHER, comm.getClosestEnemyHeadquarters())){
+            if(rc.getResourceAmount(ResourceType.MANA) >= 30 && constructRobotGreedy(RobotType.LAUNCHER, comm.getClosestEnemyHeadquarters())){
                 comm.reportBuilt(RobotType.LAUNCHER, updateLauncherScore(launcherScore));
-                return;
             }else{
-                MapLocation closestAdamantium = getClosestAdamantium();
-                if(rc.getResourceAmount(ResourceType.ADAMANTIUM) >= 50 && constructRobotGreedy(RobotType.CARRIER, closestAdamantium)){
+                if(constructRobotGreedy(RobotType.CARRIER,explore.closestAdamantium)){
                     comm.reportBuilt(RobotType.CARRIER, updateCarrierScore(carrierScore));
-                    return;
                 }
             }
         }
@@ -60,6 +65,7 @@ public class Headquarters2 extends Robot {
             if(rc.getResourceAmount(ResourceType.ADAMANTIUM) >= Constants.MIN_ADAMANTIUM_STOP_MINERS && rc.getResourceAmount(ResourceType.MANA) >= Constants.MIN_MANA_STOP_MINERS){
                 if(carrierScore <= launcherScore){
                     comm.reportBuilt(RobotType.CARRIER, updateCarrierScore(carrierScore) + Util.getMinMiners());
+//                    rc.writeSharedArray(40,rc.readSharedArray(40) + 1); //index in the array that stores carriers made
                     return;
                 }
             } else {
@@ -67,6 +73,7 @@ public class Headquarters2 extends Robot {
                     if (constructRobotGreedy(RobotType.CARRIER, explore.closestAdamantium)) {
                         comm.reportBuilt(RobotType.CARRIER, updateCarrierScore(carrierScore) + Util.getMinMiners());
                         carrierRound = rc.getRoundNum();
+//                        rc.writeSharedArray(40,rc.readSharedArray(40) + 1);
                         return;
                     }
                 }
@@ -77,35 +84,6 @@ public class Headquarters2 extends Robot {
         }
 
 
-    }
-
-    boolean constructRobotGreedy(RobotType t){
-        return constructRobotGreedy(t, null);
-    }
-
-    boolean constructRobotGreedy(RobotType t, MapLocation target){
-        try {
-            MapLocation myLoc = rc.getLocation();
-            MapLocation bestLoc = null;
-            int leastEstimation = 0;
-            MapLocation[] mapLocations = rc.getAllLocationsWithinRadiusSquared(myLoc,rc.getType().actionRadiusSquared);
-            for(MapLocation m: mapLocations){
-                if (!rc.canBuildRobot(t,m)) continue;
-                int e = 1000000;
-                if (target != null) e = m.distanceSquaredTo(target);
-                if (bestLoc == null || e < leastEstimation){
-                    leastEstimation = e;
-                    bestLoc = m;
-                }
-            }
-            if (bestLoc != null){
-                if (rc.canBuildRobot(t, bestLoc)) rc.buildRobot(t, bestLoc);
-                return true;
-            }
-        } catch (Exception e){
-            e.printStackTrace();
-        }
-        return false;
     }
 
     void computeClosestEnemy(){
@@ -134,6 +112,26 @@ public class Headquarters2 extends Robot {
     int updateCarrierScore(int oldScore){
         if (oldScore <= 0) return oldScore + 1;
         return oldScore +3;
+    }
+
+    void reportResources() throws GameActionException{
+        WellInfo[] adWells = rc.senseNearbyWells(ResourceType.ADAMANTIUM);
+        WellInfo[] manaWells = rc.senseNearbyWells(ResourceType.MANA);
+        Integer[] adWellLocs = new Integer[adWells.length];
+        Integer[] manaWellLocs = new Integer[manaWells.length];
+
+        int i = 0;
+        for(WellInfo adWell: adWells) {
+            adWellLocs[i] = Util.encodeLoc(adWell.getMapLocation());
+            i++;
+        }
+        int j = 0;
+        for(WellInfo manaWell: manaWells) {
+            manaWellLocs[j] = Util.encodeLoc(manaWell.getMapLocation());
+            j++;
+        }
+        comm.reportAdamantium(adWellLocs);
+        comm.reportMana(manaWellLocs);
     }
 
     int updateAmplifierScore(int oldScore){
