@@ -1,4 +1,4 @@
-package wouis.louisv2;
+package wouis.louisv4;
 
 import battlecode.common.MapLocation;
 import battlecode.common.RobotController;
@@ -12,7 +12,8 @@ public class Launcher extends Robot {
     boolean chickenBehavior = false;
     Launcher(RobotController rc){
         super(rc);
-        checkExploreBehavior();
+//        checkExploreBehavior();
+        explorer = true;
     }
     void play(){
 //        if(explorer) rc.setIndicatorString("I'm an Explorer!");
