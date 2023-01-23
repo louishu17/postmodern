@@ -42,10 +42,10 @@ public class Launcher extends Robot {
     }
 
     MapLocation getTarget(){
-//        if(comm.isEnemyTerritoryRadial(rc.getLocation())){
-//            rc.setIndicatorString("IM IN ENEMY TERRITORY RADIAL");
-//            return comm.getClosestAllyHeadquarter();
-//        }
+        if(rc.getRoundNum() < Constants.ATTACK_TURN && comm.isEnemyTerritoryRadial(rc.getLocation())){
+            rc.setIndicatorString("IM IN ENEMY TERRITORY RADIAL");
+            return comm.getClosestAllyHeadquarter();
+        }
         MapLocation target = getBestTarget();
         if(target != null) return target;
         if(!explorer && target == null) target = comm.getClosestEnemyHeadquarters();
