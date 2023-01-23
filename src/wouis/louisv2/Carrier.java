@@ -49,7 +49,7 @@ public class Carrier extends Robot {
             rc.setIndicatorString("ADAMANTIUM COLLECTOR");
         }
 
-        if(rc.getRoundNum() <= 100) { //well queue only actively expanding in first 60 rounds
+        if(rc.getRoundNum() <= 2000) { //well queue only actively expanding in first 60 rounds
             memoryWells();
         }
         if(getTotalResources() > 0){

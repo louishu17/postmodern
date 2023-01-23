@@ -90,18 +90,22 @@ public class Pathfinding {
                 }
 
                 for (int i = 0; i < 8; i++) {
-                    if (canMove(dir)) {
+                    MapLocation newLoc = myLoc.add(dir);
+                    if (canMove(dir) && (rc.onTheMap(newLoc) &&  rc.senseMapInfo(newLoc).getCurrentDirection() != getOppositeDirection(dir))) {
+//                        rc.setIndicatorString("MOVING TOWARD " + dir);
                         rc.move(dir);
                         return true;
                     }
-                    MapLocation newLoc = myLoc.add(dir);
-                    if (!rc.onTheMap(newLoc)) rotateRight = !rotateRight;
+                    if (!rc.onTheMap(newLoc) || rc.senseMapInfo(newLoc).getCurrentDirection() == getOppositeDirection(dir)) rotateRight = !rotateRight;
                     else lastObstacleFound = myLoc.add(dir);
                     if (rotateRight) dir = dir.rotateRight();
                     else dir = dir.rotateLeft();
                 }
 
-                if (canMove(dir)) rc.move(dir);
+                if (canMove(dir)){
+//                    rc.setIndicatorString("MOVING TOWARD " + dir);
+                    rc.move(dir);
+                }
             } catch (Exception e){
                 e.printStackTrace();
             }
@@ -123,6 +127,29 @@ public class Pathfinding {
             return (((((x << 6) | y) << 4) | obstacleDir.ordinal()) << 1) | bit;
         }
     }
+
+    Direction getOppositeDirection(Direction dir){
+        switch(dir){
+            case NORTH:
+                return Direction.SOUTH;
+            case NORTHEAST:
+                return Direction.SOUTHWEST;
+            case EAST:
+                return Direction.WEST;
+            case SOUTHEAST:
+                return Direction.NORTHWEST;
+            case SOUTH:
+                return Direction.NORTH;
+            case SOUTHWEST:
+                return Direction.NORTHEAST;
+            case WEST:
+                return Direction.EAST;
+            case NORTHWEST:
+                return Direction.SOUTHEAST;
+        }
+        return null;
+    }
+
 
 
 }

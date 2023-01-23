@@ -26,11 +26,27 @@ public class MicroAttackers extends Micro {
         myRange = rc.getType().actionRadiusSquared;
         myVisionRange = rc.getType().visionRadiusSquared;
 
+        DPS[RobotType.CARRIER.ordinal()] = 10;
         DPS[RobotType.LAUNCHER.ordinal()] = 30;
         DPS[RobotType.DESTABILIZER.ordinal()] = 50;
-        rangeExtended[RobotType.LAUNCHER.ordinal()] = 20;
-        rangeExtended[RobotType.DESTABILIZER.ordinal()] = 20;
+        setRange();
         myDPS = DPS[rc.getType().ordinal()];
+    }
+
+    void setRange(){
+        try{
+            if(rc.senseMapInfo(rc.getLocation()).hasCloud()){
+                rangeExtended[RobotType.CARRIER.ordinal()] = 4;
+                rangeExtended[RobotType.LAUNCHER.ordinal()] = 4;
+                rangeExtended[RobotType.DESTABILIZER.ordinal()] = 4;
+            }else{
+                rangeExtended[RobotType.CARRIER.ordinal()] = 20;
+                rangeExtended[RobotType.LAUNCHER.ordinal()] = 20;
+                rangeExtended[RobotType.DESTABILIZER.ordinal()] = 20;
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
     }
 
     static double currentDPS = 0;
@@ -38,9 +54,9 @@ public class MicroAttackers extends Micro {
     static double currentActionRadius;
     static boolean canAttack;
 
-    boolean doMicro(){
-        try{
+    boolean doMicro(){try{
             if (!rc.isMovementReady()) return false;
+            setRange();
             shouldPlaySafe = false;
             severelyHurt = Util.hurt(rc.getHealth());
             RobotInfo[] units = rc.senseNearbyRobots(myVisionRange, rc.getTeam().opponent());
@@ -50,6 +66,7 @@ public class MicroAttackers extends Micro {
             while (uIndex-- > 0){
                 RobotInfo r = units[uIndex];
                 switch(r.getType()){
+                    case CARRIER:
                     case LAUNCHER:
                     case DESTABILIZER:
                         shouldPlaySafe = true;

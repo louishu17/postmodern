@@ -15,7 +15,7 @@ public class Launcher extends Robot {
         checkExploreBehavior();
     }
     void play(){
-        if(explorer) rc.setIndicatorString("I'm an Explorer!");
+//        if(explorer) rc.setIndicatorString("I'm an Explorer!");
         checkChickenBehavior();
         tryAttack(true);
         tryMove();
@@ -71,8 +71,13 @@ public class Launcher extends Robot {
             }
             if (bestTarget != null)
             {
-                if(bestTarget.type == RobotType.HEADQUARTERS && bestTarget.mloc.isWithinDistanceSquared(rc.getLocation(),RobotType.HEADQUARTERS.actionRadiusSquared+25)){
-                    return rc.getLocation();
+                if(bestTarget.type == RobotType.HEADQUARTERS){
+                    if (bestTarget.mloc.isWithinDistanceSquared(rc.getLocation(),RobotType.HEADQUARTERS.actionRadiusSquared)) {
+                        return comm.getClosestAllyHeadquarter();
+                    }
+                    if(bestTarget.mloc.isWithinDistanceSquared(rc.getLocation(),RobotType.HEADQUARTERS.actionRadiusSquared+25)){
+                        return rc.getLocation();
+                    }
                 }else{
                     return bestTarget.mloc;
                 }

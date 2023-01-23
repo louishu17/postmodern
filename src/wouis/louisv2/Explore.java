@@ -33,8 +33,6 @@ public class Explore {
     MapLocation closestMyHeadquarters = null;
     int distMyHeadquarters = 0;
 
-    boolean compareIslands =  false;
-
     static int BYTECODE_EXPLORE_RESOURCE_LIMIT;
 
     Explore(RobotController rc){

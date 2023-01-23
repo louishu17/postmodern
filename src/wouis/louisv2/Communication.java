@@ -33,8 +33,6 @@ public class Communication {
     static boolean headquarter = false;
     static boolean soldier = false;
 
-    static final int INF_COMM = (1 << 16) - 1;
-
     int horizontalSymmetry;
     int verticalSymmetry;
     int rotationSymmetry;
@@ -45,7 +43,10 @@ public class Communication {
         myID = rc.getID();
         if(rc.getType() == RobotType.HEADQUARTERS) headquarter = true;
         if(rc.getType() == RobotType.LAUNCHER) soldier = true;
-        if(headquarter) setHeadquartersLoc();
+        if(headquarter){
+//            System.out.println("HI I'm " + myID + " and I'm setting my location.");
+            setHeadquartersLoc();
+        }
         mapWidth = rc.getMapWidth();
         mapHeight = rc.getMapHeight();
         horizontalSymmetry = 0;
@@ -59,10 +60,10 @@ public class Communication {
             int i = -1;
             while(i++ < 3){
                 if(rc.readSharedArray(HEADQUARTERS_LOC_INDEX + i) == 0) {
-                    //System.out.println(rc.readSharedArray(HEADQUARTERS_LOC_INDEX + i));
+//                    System.out.println("WROTE TO: " + (HEADQUARTERS_LOC_INDEX + i));
                     rc.writeSharedArray(HEADQUARTERS_LOC_INDEX + i, Util.encodeLoc(rc.getLocation()));
+                    break;
                 }
-                break;
             }
             rc.writeSharedArray(HEADQUARTERS_NB_INDEX, rc.readSharedArray(HEADQUARTERS_NB_INDEX) + 1);
         }catch(Exception e){
@@ -302,10 +303,10 @@ public class Communication {
             }
             if (ans != null) return ans;
 
-            int i = -1;
-            while (i++ < rc.readSharedArray(HEADQUARTERS_NB_INDEX) - 1) {
+
+            int i = rc.readSharedArray(HEADQUARTERS_NB_INDEX)  ;
+            while (i-- > 0) {
                 MapLocation newLoc = Util.getLocation(rc.readSharedArray(HEADQUARTERS_LOC_INDEX + i));
-                System.out.println(newLoc);
                 int d = myLoc.distanceSquaredTo(newLoc);
                 if (ans == null || bestDist > d) {
                     bestDist = d;
