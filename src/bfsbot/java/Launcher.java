@@ -1,11 +1,9 @@
-package wouids.louisv3;
+package bfsbot.java;
 
 import battlecode.common.MapLocation;
 import battlecode.common.RobotController;
 import battlecode.common.RobotInfo;
 import battlecode.common.RobotType;
-
-import java.util.Map;
 
 public class Launcher extends Robot {
 

@@ -1,4 +1,4 @@
-package wouids.louisv3;
+package louisv10;
 
 import battlecode.common.*;
 
@@ -97,7 +97,8 @@ public class Carrier extends Robot {
             return;
         }
         rc.setIndicatorLine(rc.getLocation(),loc,0,0,255);
-        while(rc.isMovementReady()){
+        int i = 2;
+        while(i-- >= 0){
             bfs.move(loc);
         }
     }

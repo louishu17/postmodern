@@ -1,4 +1,4 @@
-package wouids.louisv3;
+package louisv10;
 
 import battlecode.common.Direction;
 import battlecode.common.MapLocation;

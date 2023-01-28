@@ -1,4 +1,4 @@
-package wouids.louisv3;
+package bfsbot.java;
 
 import battlecode.common.*;
 

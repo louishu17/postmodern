@@ -1,11 +1,9 @@
-package wouids.louisv3;
+package centerBot.java;
 
 import battlecode.common.MapLocation;
 import battlecode.common.RobotController;
 import battlecode.common.RobotInfo;
 import battlecode.common.RobotType;
-
-import java.util.Map;
 
 public class Launcher extends Robot {
 
@@ -30,7 +28,7 @@ public class Launcher extends Robot {
     }
 
     void checkIfTouchedCenter(){
-        if(rc.getLocation().isWithinDistanceSquared(center,5)) touchedCenter = true;
+        if(rc.getLocation().isWithinDistanceSquared(center,3)) touchedCenter = true;
     }
     void checkExploreBehavior(){
         try{
@@ -62,11 +60,11 @@ public class Launcher extends Robot {
             target = explore.getClosestEnemyOccupiedIsland();
         }
         if(target == null){
-//            if(touchedCenter){
+            if(touchedCenter){
                 target = comm.getClosestEnemyHeadquarters();
-//            }else{
-//                target = center;
-//            }
+            }else{
+                target = center;
+            }
         }
         if(target != null) return target;
         return explore.getExploreTarget(true);

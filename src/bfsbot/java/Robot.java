@@ -1,4 +1,4 @@
-package wouids.louisv3;
+package bfsbot.java;
 
 import battlecode.common.*;
 
@@ -25,7 +25,7 @@ public abstract class Robot {
 
     public Robot(RobotController rc){
         this.rc = rc;
-        bfs = new BFS(rc);
+        bfs = new BFSLauncher(rc);
         explore = new Explore(rc);
         comm = new Communication(rc);
         if(rc.getType() == RobotType.CARRIER) isCarrier = true;
@@ -80,7 +80,7 @@ public abstract class Robot {
                 rc.attack(bestTarget.mloc);
                 return;
             }
-            if(rc.getType() == RobotType.LAUNCHER && bestTarget == null && !onlyAttackers){
+            if(rc.getType() == RobotType.LAUNCHER && bestTarget == null){
                 MapLocation[] cloudLocs = rc.senseNearbyCloudLocations(rc.getType().actionRadiusSquared);
                 if(cloudLocs.length > 0){
                     rc.attack(cloudLocs[0]);

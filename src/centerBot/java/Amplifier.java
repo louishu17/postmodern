@@ -1,4 +1,4 @@
-package wouids.louisv3;
+package centerBot.java;
 
 import battlecode.common.MapLocation;
 import battlecode.common.RobotController;
