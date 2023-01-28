@@ -43,9 +43,9 @@ public class Launcher extends Robot {
     void tryMove(){
         if(!rc.isMovementReady()) return;
         MapLocation target = getTarget();
-        if (target != null){
-            rc.setIndicatorLine(rc.getLocation(),target, 255, 0, 0);
-        }
+//        if (target != null){
+//            rc.setIndicatorLine(rc.getLocation(),target, 255, 0, 0);
+//        }
         bfs.move(target);
     }
 

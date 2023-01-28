@@ -96,7 +96,7 @@ public class Carrier extends Robot {
         if(checkIfNextToWell(loc)){
             return;
         }
-        rc.setIndicatorLine(rc.getLocation(),loc,0,0,255);
+//        rc.setIndicatorLine(rc.getLocation(),loc,0,0,255);
         while(rc.isMovementReady()){
             bfs.move(loc);
         }

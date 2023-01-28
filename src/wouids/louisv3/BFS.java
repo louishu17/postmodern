@@ -19,9 +19,9 @@ public class BFS {
     }
 
     void move(MapLocation target){
-        if (target == null) return;
         if (!rc.isMovementReady()) return;
         if(micro.doMicro()) return;
+        if (target == null) return;
         if(rc.getLocation().distanceSquaredTo(target) == 0) return;
         path.move(target);
     }
