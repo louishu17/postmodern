@@ -186,7 +186,6 @@ public class Communication {
             MapLocation myLoc = rc.getLocation();
             MapLocation ans = null;
             int bestDist = 0;
-            int i = rc.readSharedArray(HEADQUARTERS_NB_INDEX);
             int hSym = 0;
             if(horizontalSymmetry != 0){
                 hSym = horizontalSymmetry;
@@ -212,6 +211,8 @@ public class Communication {
 //            System.out.println("Horizontal Sym: " + hSym);
 //            System.out.println("Vertical Sym: " +vSym);
 //            System.out.println("Rotation Sym: " + rSym);
+
+            int i = rc.readSharedArray(HEADQUARTERS_NB_INDEX);
             while (i-- > 0){
                 MapLocation newLoc = Util.getLocation(rc.readSharedArray(HEADQUARTERS_LOC_INDEX + i));
                 if ((hSym&1) == 0 && (hSym & (1 << (i+1))) == 0){

@@ -91,8 +91,12 @@ public class Pathfinding {
 
                 for (int i = 0; i < 8; i++) {
                     MapLocation newLoc = myLoc.add(dir);
-                    if (canMove(dir) && rc.onTheMap(newLoc) &&  rc.senseMapInfo(newLoc).getCurrentDirection() != getOppositeDirection(dir)) {
-//                        rc.setIndicatorString("MOVING TOWARD " + dir);
+                    Direction currentDir = Direction.CENTER;
+                    if(rc.onTheMap(newLoc)){
+                        currentDir = rc.senseMapInfo(newLoc).getCurrentDirection();
+                    }
+                    if (canMove(dir) && rc.onTheMap(newLoc) && checkCurrent(dir,currentDir)) {
+                        rc.setIndicatorString("MOVING TOWARD " + dir);
                         rc.move(dir);
                         return true;
                     }
@@ -128,28 +132,86 @@ public class Pathfinding {
         }
     }
 
-    Direction getOppositeDirection(Direction dir){
-        switch(dir){
-            case NORTH:
-                return Direction.SOUTH;
-            case NORTHEAST:
-                return Direction.SOUTHWEST;
-            case EAST:
-                return Direction.WEST;
-            case SOUTHEAST:
-                return Direction.NORTHWEST;
-            case SOUTH:
-                return Direction.NORTH;
-            case SOUTHWEST:
-                return Direction.NORTHEAST;
-            case WEST:
-                return Direction.EAST;
-            case NORTHWEST:
-                return Direction.SOUTHEAST;
+    boolean checkCurrent(Direction dir, Direction currentDir){
+        if(currentDir == Direction.CENTER){
+            return true;
         }
-        return null;
-    }
+        int dx = 0;
+        int dy = 0;
+        int cdx = 0;
+        int cdy = 0;
 
+        switch(dir){
+            case EAST:
+                dx = 1;
+                dy = 0;
+                break;
+            case NORTHEAST:
+                dx = 1;
+                dy = 1;
+                break;
+            case NORTH:
+                dx = 0;
+                dy = 1;
+                break;
+            case NORTHWEST:
+                dx = -1;
+                dy = 1;
+                break;
+            case WEST:
+                dx = -1;
+                dy = 0;
+                break;
+            case SOUTHWEST:
+                dx = -1;
+                dy = -1;
+                break;
+            case SOUTH:
+                dx = 0;
+                dy = -1;
+                break;
+            case SOUTHEAST:
+                dx = 1;
+                dy = -1;
+                break;
+        }
+
+        switch(currentDir){
+            case EAST:
+                cdx = 1;
+                cdy = 0;
+                break;
+            case NORTHEAST:
+                cdx = 1;
+                cdy = 1;
+                break;
+            case NORTH:
+                cdx = 0;
+                cdy = 1;
+                break;
+            case NORTHWEST:
+                cdx = -1;
+                cdy = 1;
+                break;
+            case WEST:
+                cdx = -1;
+                cdy = 0;
+                break;
+            case SOUTHWEST:
+                cdx = -1;
+                cdy = -1;
+                break;
+            case SOUTH:
+                cdx = 0;
+                cdy = -1;
+                break;
+            case SOUTHEAST:
+                cdx = 1;
+                cdy = -1;
+                break;
+        }
+        return (dx * cdx + dy * cdy) > 0;
+    }
 
 
 }
