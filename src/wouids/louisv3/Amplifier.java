@@ -1,4 +1,4 @@
-package wouis.louisv2;
+package wouids.louisv3;
 
 import battlecode.common.MapLocation;
 import battlecode.common.RobotController;
@@ -20,8 +20,7 @@ public class Amplifier extends Robot {
     }
 
     MapLocation getTarget(){
-        comm.getClosestEnemyHeadquarters();
-        MapLocation loc = comm.enemyHQTarget;
+        MapLocation loc = comm.getClosestEnemyHeadquarters();
         if(loc == null) loc = explore.getExploreTarget();
         return loc;
     }

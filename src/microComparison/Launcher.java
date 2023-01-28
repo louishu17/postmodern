@@ -1,4 +1,4 @@
-package wouis.louisv2;
+package microComparison;
 
 import battlecode.common.MapLocation;
 import battlecode.common.RobotController;
@@ -10,20 +10,12 @@ public class Launcher extends Robot {
     boolean explorer;
 
     boolean chickenBehavior = false;
-
-    boolean enemiesNear;
     Launcher(RobotController rc){
         super(rc);
         checkExploreBehavior();
     }
     void play(){
-        enemiesNear = false;
-
-        if(explorer) {
-            rc.setIndicatorString("I'm an Explorer!");
-        }else{
-            rc.setIndicatorString("MY HQ TARGET: " + String.valueOf(comm.enemyHQTarget));
-        }
+//        if(explorer) rc.setIndicatorString("I'm an Explorer!");
         checkChickenBehavior();
         tryAttack(true);
         tryMove();
@@ -40,20 +32,12 @@ public class Launcher extends Robot {
         }
     }
 
-    void checkEnemyHQ(){
-        if(comm.enemyHQTarget != null && rc.getLocation().isWithinDistanceSquared(comm.enemyHQTarget, RobotType.HEADQUARTERS.visionRadiusSquared) && !enemiesNear){
-//            System.out.println("OLD TARGET: " + comm.enemyHQTarget);
-            comm.getClosestEnemyHeadquarters();
-//            System.out.println("NEW TARGET: " + comm.enemyHQTarget);
-        }
-    }
-
     void tryMove(){
         if(!rc.isMovementReady()) return;
         MapLocation target = getTarget();
-        if (target != null){
-            rc.setIndicatorLine(rc.getLocation(),target, 255, 0, 0);
-        }
+//        if (target != null){
+//            rc.setIndicatorLine(rc.getLocation(),target, 255, 0, 0);
+//        }
         bfs.move(target);
     }
 
@@ -64,12 +48,7 @@ public class Launcher extends Robot {
 //        }
         MapLocation target = getBestTarget();
         if(target != null) return target;
-        if(!explorer && target == null){
-            if(comm.enemyHQTarget == null){
-                comm.getClosestEnemyHeadquarters();
-            }
-            target = comm.enemyHQTarget;
-        }
+        if(!explorer && target == null) target = comm.getClosestEnemyHeadquarters();
         if(target != null) return target;
         return explore.getExploreTarget();
     }
@@ -87,14 +66,12 @@ public class Launcher extends Robot {
             MoveTarget bestTarget = null;
             RobotInfo[] enemies = rc.senseNearbyRobots(rc.getLocation(), explore.myVisionRange, rc.getTeam().opponent());
             for(RobotInfo enemy: enemies){
-                if(Util.isAttacker(enemy.getType())) enemiesNear = true;
                 MoveTarget mt = new MoveTarget(enemy);
                 if (mt.isBetterThan(bestTarget)) bestTarget = mt;
             }
             if (bestTarget != null)
             {
                 if(bestTarget.type == RobotType.HEADQUARTERS){
-                    checkEnemyHQ();
                     if (bestTarget.mloc.isWithinDistanceSquared(rc.getLocation(),RobotType.HEADQUARTERS.actionRadiusSquared)) {
                         return comm.getClosestAllyHeadquarter();
                     }

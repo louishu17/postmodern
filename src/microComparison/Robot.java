@@ -1,4 +1,4 @@
-package wouis.louisv2;
+package microComparison;
 
 import battlecode.common.*;
 
@@ -80,12 +80,12 @@ public abstract class Robot {
                 rc.attack(bestTarget.mloc);
                 return;
             }
-//            if(rc.getType() == RobotType.LAUNCHER && bestTarget == null){
-//                MapLocation[] cloudLocs = rc.senseNearbyCloudLocations(rc.getType().actionRadiusSquared);
-//                if(cloudLocs.length > 0){
-//                    rc.attack(cloudLocs[0]);
-//                }
-//            }
+            if(rc.getType() == RobotType.LAUNCHER && bestTarget == null){
+                MapLocation[] cloudLocs = rc.senseNearbyCloudLocations(rc.getType().actionRadiusSquared);
+                if(cloudLocs.length > 0){
+                    rc.attack(cloudLocs[0]);
+                }
+            }
         }catch(Exception e){
             e.printStackTrace();
         }

@@ -1,4 +1,4 @@
-package wouis.louisv2;
+package wouids.louisv3;
 
 import battlecode.common.*;
 

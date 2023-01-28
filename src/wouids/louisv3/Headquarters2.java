@@ -1,4 +1,4 @@
-package wouis.louisv2;
+package wouids.louisv3;
 
 import battlecode.common.*;
 
@@ -26,11 +26,8 @@ public class Headquarters2 extends Robot {
 
     void buildUnit() throws GameActionException{
         if(!rc.isActionReady()) return;
-        if(comm.enemyHQTarget == null){
-            comm.getClosestEnemyHeadquarters();
-        }
         if(rc.getRoundNum() < 5){
-            if(rc.getResourceAmount(ResourceType.MANA) >= 60 && constructRobotGreedy(RobotType.LAUNCHER, comm.enemyHQTarget)){
+            if(rc.getResourceAmount(ResourceType.MANA) >= 60 && constructRobotGreedy(RobotType.LAUNCHER, comm.getClosestEnemyHeadquarters())){
                 comm.reportBuilt(RobotType.LAUNCHER, updateLauncherScore(launcherScore));
                 return;
             }else{
@@ -75,7 +72,7 @@ public class Headquarters2 extends Robot {
                 }
             }
         }
-        if (constructRobotGreedy(RobotType.LAUNCHER, comm.enemyHQTarget)){
+        if (constructRobotGreedy(RobotType.LAUNCHER, comm.getClosestEnemyHeadquarters())){
             comm.reportBuilt(RobotType.LAUNCHER, updateLauncherScore(launcherScore));
         }
 

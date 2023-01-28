@@ -26,7 +26,7 @@ public class MicroAttackers extends Micro {
         myRange = rc.getType().actionRadiusSquared;
         myVisionRange = rc.getType().visionRadiusSquared;
 
-        DPS[RobotType.LAUNCHER.ordinal()] = 30;
+        DPS[RobotType.LAUNCHER.ordinal()] = 20;
         DPS[RobotType.DESTABILIZER.ordinal()] = 50;
         rangeExtended[RobotType.LAUNCHER.ordinal()] = 20;
         rangeExtended[RobotType.DESTABILIZER.ordinal()] = 20;

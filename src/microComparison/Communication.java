@@ -1,4 +1,4 @@
-package wouis.louisv2;
+package microComparison;
 
 import battlecode.common.*;
 
@@ -36,8 +36,6 @@ public class Communication {
     int horizontalSymmetry;
     int verticalSymmetry;
     int rotationSymmetry;
-
-    static MapLocation enemyHQTarget;
 
 
     Communication(RobotController rc) {
@@ -183,12 +181,11 @@ public class Communication {
         return new MapLocation(mapWidth - loc.x - 1, mapHeight - loc.y - 1);
     }
 
-    void getClosestEnemyHeadquarters(){
+    MapLocation getClosestEnemyHeadquarters(){
         try {
-            System.out.println("OLD TARGET: " + enemyHQTarget);
             MapLocation myLoc = rc.getLocation();
             MapLocation ans = null;
-            int bestDist = 100000;
+            int bestDist = 0;
             int i = rc.readSharedArray(HEADQUARTERS_NB_INDEX);
             int hSym = 0;
             if(horizontalSymmetry != 0){
@@ -210,11 +207,11 @@ public class Communication {
             }else{
                 rSym = rc.readSharedArray(R_SYM);
             }
-            System.out.println("Horizontal Sym: " + hSym);
-            System.out.println("Vertical Sym: " +vSym);
-            System.out.println("Rotation Sym: " + rSym);
             boolean updater = false;
             boolean updateSymmetries = rc.getRoundNum() <= 5;
+//            System.out.println("Horizontal Sym: " + hSym);
+//            System.out.println("Vertical Sym: " +vSym);
+//            System.out.println("Rotation Sym: " + rSym);
             while (i-- > 0){
                 MapLocation newLoc = Util.getLocation(rc.readSharedArray(HEADQUARTERS_LOC_INDEX + i));
                 if ((hSym&1) == 0 && (hSym & (1 << (i+1))) == 0){
@@ -232,11 +229,8 @@ public class Communication {
                     }
                     int d = myLoc.distanceSquaredTo(symLoc);
                     if (ans == null || bestDist > d){
-                        if(!symLoc.equals(enemyHQTarget))
-                        {
-                            ans = symLoc;
-                            bestDist = d;
-                        }
+                        bestDist = d;
+                        ans = symLoc;
                     }
                 }
                 if ((vSym&1) == 0 && (vSym & (1 << (i+1))) == 0){
@@ -254,11 +248,8 @@ public class Communication {
                     }
                     int d = myLoc.distanceSquaredTo(symLoc);
                     if (ans == null || bestDist > d){
-                        if(!symLoc.equals(enemyHQTarget))
-                        {
-                            ans = symLoc;
-                            bestDist = d;
-                        }
+                        bestDist = d;
+                        ans = symLoc;
                     }
                 }if ((rSym&1) == 0 && (rSym & (1 << (i+1))) == 0){
                     MapLocation symLoc = getRSym(newLoc);
@@ -275,14 +266,10 @@ public class Communication {
                     }
                     int d = myLoc.distanceSquaredTo(symLoc);
                     if (ans == null || bestDist > d){
-                        if(!symLoc.equals(enemyHQTarget))
-                        {
-                            ans = symLoc;
-                            bestDist = d;
-                        }
+                        bestDist = d;
+                        ans = symLoc;
                     }
                 }
-                System.out.println("Considered location: " + ans);
             }
             if (updateh){
                 if(rc.canWriteSharedArray(H_SYM, hSym)) rc.writeSharedArray(H_SYM, hSym);
@@ -296,11 +283,11 @@ public class Communication {
                 if(rc.canWriteSharedArray(R_SYM, rSym)) rc.writeSharedArray(R_SYM, rSym);
                 rotationSymmetry = rSym;
             }
-            enemyHQTarget = ans;
-            System.out.println("NEW TARGET: " + enemyHQTarget);
+            return ans;
         } catch (Exception e){
             e.printStackTrace();
         }
+        return null;
 
     }
     MapLocation getClosestAllyHeadquarter(){
