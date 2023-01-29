@@ -1,9 +1,6 @@
 package wouisv7;
 
-import battlecode.common.Clock;
-import battlecode.common.Direction;
-import battlecode.common.MapLocation;
-import battlecode.common.RobotController;
+import battlecode.common.*;
 
 public abstract class BFS {
     Pathfinding path;
@@ -46,36 +43,40 @@ public abstract class BFS {
     }
 
     void move(MapLocation target,boolean greedy){
-        if (!rc.isMovementReady()) return;
-        if(micro.doMicro()){
-            reset();
-            return;
-        }
-        if (target == null) return;
-        if(rc.getLocation().distanceSquaredTo(target) == 0) return;
-        update(target);
-
-        if(!greedy && turnsGreedy <= 0){
-
-            int t = Clock.getBytecodesLeft();
-
-            Direction dir = null;
-            try{
-                dir = bestDir(target);
-            }catch(Exception e){
-                e.printStackTrace();
-            }
-            t = Clock.getBytecodesLeft() - t;
-            rc.setIndicatorString("Using bfs!!! " + t);
-            if (dir != null && !mapTracker.check(rc.getLocation().add(dir)) && rc.getRoundNum() % 2 != 0){
-                move(dir);
+        try{
+            if (!rc.isMovementReady()) return;
+            if(micro.doMicro()){
+                reset();
                 return;
-            } else activateGreedy();
-        }
+            }
+            if (target == null) return;
+            if(rc.getLocation().distanceSquaredTo(target) == 0) return;
+            update(target);
 
-        if (Clock.getBytecodesLeft() >= BYTECODE_REMAINING){
-            path.move(target);
-            --turnsGreedy;
+            if(!greedy && turnsGreedy <= 0){
+
+                int t = Clock.getBytecodesLeft();
+
+                Direction dir = null;
+                try{
+                    dir = bestDir(target);
+                }catch(Exception e){
+                    e.printStackTrace();
+                }
+                t = Clock.getBytecodesLeft() - t;
+                rc.setIndicatorString("Using bfs!!! " + t);
+                if (dir != null && !mapTracker.check(rc.getLocation().add(dir)) && !rc.senseCloud(rc.getLocation())){
+                    move(dir);
+                    return;
+                } else activateGreedy();
+            }
+
+            if (Clock.getBytecodesLeft() >= BYTECODE_REMAINING){
+                path.move(target);
+                --turnsGreedy;
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 
