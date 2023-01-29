@@ -33,7 +33,6 @@ public abstract class Robot {
 
     abstract void play();
     void initTurn(){
-        //comm.reportSelf();
         if(rc.getType() == RobotType.HEADQUARTERS && rc.getRoundNum() < 10) {
             try{
                 reportResources();
