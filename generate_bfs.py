@@ -148,7 +148,7 @@ def init_rubble_vars_specialized(valid_offsets, min_dx, max_dx, min_dy, max_dy):
 
   statement_template_onmap = """
     @{varname_location} = rc.getLocation().translate(@{offset_0}, @{offset_1});
-    @{varname} = 1.0 + rc.senseRubble(@{varname_location})/10.0;
+    @{varname} = 1.0;
     @{varname_distance} = 10*Math.sqrt(@{varname_location}.distanceSquaredTo(target));
     """
 

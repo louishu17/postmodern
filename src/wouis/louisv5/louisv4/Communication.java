@@ -1,7 +1,6 @@
-package wouis.louisv2;
+package wouis.louisv5.louisv4;
 
 import battlecode.common.*;
-import java.lang.Math;
 
 public class Communication {
     RobotController rc;
@@ -37,8 +36,6 @@ public class Communication {
     int horizontalSymmetry;
     int verticalSymmetry;
     int rotationSymmetry;
-
-    static MapLocation enemyHQTarget;
 
 
     Communication(RobotController rc) {
@@ -184,12 +181,11 @@ public class Communication {
         return new MapLocation(mapWidth - loc.x - 1, mapHeight - loc.y - 1);
     }
 
-    void getClosestEnemyHeadquarters(){
+    MapLocation getClosestEnemyHeadquarters(){
         try {
-            System.out.println("OLD TARGET: " + enemyHQTarget);
             MapLocation myLoc = rc.getLocation();
             MapLocation ans = null;
-            int bestDist = 100000;
+            int bestDist = 0;
             int i = rc.readSharedArray(HEADQUARTERS_NB_INDEX);
             int hSym = 0;
             if(horizontalSymmetry != 0){
@@ -211,9 +207,6 @@ public class Communication {
             }else{
                 rSym = rc.readSharedArray(R_SYM);
             }
-            System.out.println("Horizontal Sym: " + hSym);
-            System.out.println("Vertical Sym: " +vSym);
-            System.out.println("Rotation Sym: " + rSym);
             boolean updater = false;
             boolean updateSymmetries = rc.getRoundNum() <= 5;
             while (i-- > 0){
@@ -233,11 +226,8 @@ public class Communication {
                     }
                     int d = myLoc.distanceSquaredTo(symLoc);
                     if (ans == null || bestDist > d){
-                        if(!symLoc.equals(enemyHQTarget))
-                        {
-                            ans = symLoc;
-                            bestDist = d;
-                        }
+                        bestDist = d;
+                        ans = symLoc;
                     }
                 }
                 if ((vSym&1) == 0 && (vSym & (1 << (i+1))) == 0){
@@ -255,11 +245,8 @@ public class Communication {
                     }
                     int d = myLoc.distanceSquaredTo(symLoc);
                     if (ans == null || bestDist > d){
-                        if(!symLoc.equals(enemyHQTarget))
-                        {
-                            ans = symLoc;
-                            bestDist = d;
-                        }
+                        bestDist = d;
+                        ans = symLoc;
                     }
                 }if ((rSym&1) == 0 && (rSym & (1 << (i+1))) == 0){
                     MapLocation symLoc = getRSym(newLoc);
@@ -276,14 +263,10 @@ public class Communication {
                     }
                     int d = myLoc.distanceSquaredTo(symLoc);
                     if (ans == null || bestDist > d){
-                        if(!symLoc.equals(enemyHQTarget))
-                        {
-                            ans = symLoc;
-                            bestDist = d;
-                        }
+                        bestDist = d;
+                        ans = symLoc;
                     }
                 }
-                System.out.println("Considered location: " + ans);
             }
             if (updateh){
                 if(rc.canWriteSharedArray(H_SYM, hSym)) rc.writeSharedArray(H_SYM, hSym);
@@ -297,11 +280,11 @@ public class Communication {
                 if(rc.canWriteSharedArray(R_SYM, rSym)) rc.writeSharedArray(R_SYM, rSym);
                 rotationSymmetry = rSym;
             }
-            enemyHQTarget = ans;
-            System.out.println("NEW TARGET: " + enemyHQTarget);
+            return ans;
         } catch (Exception e){
             e.printStackTrace();
         }
+        return null;
 
     }
     MapLocation getClosestAllyHeadquarter(){
@@ -409,15 +392,8 @@ public class Communication {
         }
     }
 
-    /**
-     * Returns an adamantium well from comms, based on a weighted distribution system
-     * Closer wells are weighted more heavily and more likely to be returned
-     * Allows for more even distribution of carriers
-     * @return
-     * @throws GameActionException
-     */
     MapLocation getClosestAdamantium() throws GameActionException{
-        /*int i = -1;
+        int i = -1;
         int closestDist = 10000;
         MapLocation loc = null;
         while(i++ < 4) {
@@ -427,36 +403,10 @@ public class Communication {
                 closestDist = rc.getLocation().distanceSquaredTo(Util.getLocation(codeLoc));
             }
         }
-        return loc;*/
-
-        int i = -1;
-        int sumDist = 0;
-        int totalWeight = 0;
-        int currentWeight = 0;
-        double[] weights = new double[5];
-        while(i++ < 4) {
-            weights[i] = rc.readSharedArray(i * 2 + 1);
-            sumDist += weights[i]; //sums up all distances
-        }
-        i = -1;
-        while(i++ < 4) {
-            if(weights[i] != 0) {
-                weights[i] = sumDist/weights[i]; //reverses the distances, so closer wells are weighted greater
-            }
-            totalWeight += weights[i];
-        }
-        double r = Math.random() * totalWeight;
-        i = -1;
-        while(i++ < 4) {
-            currentWeight += weights[i];
-            if(currentWeight > r) {
-                return Util.getLocation(rc.readSharedArray(i * 2));
-            }
-        }
-        throw new RuntimeException("Should never be shown.");
+        return loc;
     }
     MapLocation getClosestMana() throws GameActionException{
-        /*int i = -1;
+        int i = -1;
         int closestDist = 10000;
         MapLocation loc = null;
         while(i++ < 4) {
@@ -466,33 +416,7 @@ public class Communication {
                 closestDist = rc.getLocation().distanceSquaredTo(Util.getLocation(codeLoc));
             }
         }
-        return loc;*/
-
-        int i = -1;
-        int sumDist = 0;
-        int totalWeight = 0;
-        int currentWeight = 0;
-        double[] weights = new double[5];
-        while(i++ < 4) {
-            weights[i] = rc.readSharedArray(i * 2 + 11);
-            sumDist += weights[i]; //sums up all distances
-        }
-        i = -1;
-        while(i++ < 4) {
-            if(weights[i] != 0) {
-                weights[i] = sumDist/weights[i]; //reverses the distances, so closer wells are weighted greater
-            }
-            totalWeight += weights[i];
-        }
-        double r = Math.random() * totalWeight;
-        i = -1;
-        while(i++ < 4) {
-            currentWeight += weights[i];
-            if(currentWeight > r) {
-                return Util.getLocation(rc.readSharedArray(i * 2 + 10));
-            }
-        }
-        throw new RuntimeException("Should never be shown.");
+        return loc;
     }
 
 }
