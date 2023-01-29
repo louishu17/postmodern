@@ -30,7 +30,6 @@ public class Amplifier extends Robot {
         return loc;
     }
 
-
     void memoryWells(){
         try {
             rememberWells();

@@ -5,9 +5,6 @@ import battlecode.common.*;
 public class Communication {
     RobotController rc;
 
-
-    static final int ISLAND_LOCS = 20;
-
     static final int HEADQUARTERS_LOC_INDEX = 54;
 
     static final int HEADQUARTERS_NB_INDEX = 58;
@@ -158,20 +155,17 @@ public class Communication {
         }
     }
 
-    void reportIsland(MapLocation islandLoc) throws GameActionException{
-        int i = -1;
-        while(i++ < Constants.NB_REPORT_ISLANDS){
-            if(rc.readSharedArray(i + ISLAND_LOCS) == 0){
-                int newIslandLocCode = Util.encodeLoc(islandLoc);
-                rc.writeSharedArray(i + ISLAND_LOCS, newIslandLocCode);
-                break;
-            }
+    void reportIsland(MapLocation islandLoc, int id) throws GameActionException{
+        System.out.println("REPORTED " + id);
+        int newIslandLocCode = Util.encodeLoc(islandLoc);
+        if(rc.canWriteSharedArray(id-1, newIslandLocCode)){
+            rc.writeSharedArray(id-1, newIslandLocCode);
+        }
+    }
 
-            int encodedIslandLoc = rc.readSharedArray(i + ISLAND_LOCS);
-            MapLocation commIslandLoc = Util.getLocation(encodedIslandLoc);
-            if (commIslandLoc.equals(islandLoc)){
-                return;
-            }
+    void clearIsland(int id) throws GameActionException{
+        if(rc.canWriteSharedArray(id-1, 0)){
+            rc.writeSharedArray(id-1, 0);
         }
     }
 
