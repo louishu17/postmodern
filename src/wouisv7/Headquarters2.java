@@ -18,6 +18,11 @@ public class Headquarters2 extends Robot {
 
     void play() {
         computeClosestEnemy();
+        try {
+            comm.updateClosestIsland();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         builtAmplifier = false;
         int i = 5;
         try {
