@@ -64,7 +64,7 @@ public abstract class BFS {
                     e.printStackTrace();
                 }
                 t = Clock.getBytecodesLeft() - t;
-                rc.setIndicatorString("Using bfs!!! " + t);
+//                rc.setIndicatorString("Using bfs!!! " + t);
                 if (dir != null && !mapTracker.check(rc.getLocation().add(dir)) && !rc.senseCloud(rc.getLocation())){
                     move(dir);
                     return;

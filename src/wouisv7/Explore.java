@@ -121,9 +121,9 @@ public class Explore {
 
     void reportIslands(){
         try{
-//            visibleFreeIsland = false;
+            visibleFreeIsland = false;
 //            visibleEnemyOccupiedIsland = false;
-//            closestFreeIsland = null;
+            closestFreeIsland = null;
 //            closestEnemyOccupiedIsland = null;
 //            distFreeIsland = 0;
 //            distEnemyOccupiedIsland = 0;
@@ -133,13 +133,13 @@ public class Explore {
                 if(Clock.getBytecodeNum() > BYTECODE_EXPLORE_RESOURCE_LIMIT) break;
                 MapLocation[] islandLocs = rc.senseNearbyIslandLocations(id);
                 if(rc.senseTeamOccupyingIsland(id) == Team.NEUTRAL){
-//                    visibleFreeIsland = true;
-//                    if(compareFreeIslands){
-                    if(islandLocs.length > 0){
-                        closestFreeIsland = islandLocs[0];
-                        Robot.comm.reportIsland(islandLocs[0], id);
+                    visibleFreeIsland = true;
+                    if(compareFreeIslands){
+                        if(islandLocs.length > 0){
+                            closestFreeIsland = islandLocs[0];
+                            Robot.comm.reportIsland(islandLocs[0], id);
+                        }
                     }
-//                    }
                 }else{
                     Robot.comm.clearIsland(id);
                 }

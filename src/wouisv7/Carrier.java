@@ -42,12 +42,12 @@ public class Carrier extends Robot {
         }
     }
     void play(){
-        if(goingForMana)
-        {
-            rc.setIndicatorString("MANA COLLECTOR");
-        }else{
-            rc.setIndicatorString("ADAMANTIUM COLLECTOR");
-        }
+//        if(goingForMana)
+//        {
+//            rc.setIndicatorString("MANA COLLECTOR");
+//        }else{
+//            rc.setIndicatorString("ADAMANTIUM COLLECTOR");
+//        }
 
         memoryWells();
         if(getTotalResources() > 0){
@@ -105,7 +105,10 @@ public class Carrier extends Robot {
         MapLocation loc = null;
         try{
             if(rc.getAnchor() != null){
-                loc = explore.getClosestFreeIsland();
+                int closestIslandIndex = comm.getClosestIslandIndex(explore.getClosestMyHeadquarters());
+                MapLocation closestIsland = Util.getLocation(rc.readSharedArray(closestIslandIndex));
+                loc = closestIsland;
+                if(loc == null) loc = explore.getClosestFreeIsland();
                 if(loc == null) return explore.getExploreTarget(false);
             }else{
                 if(totalResources == GameConstants.CARRIER_CAPACITY){

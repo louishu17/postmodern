@@ -13,32 +13,21 @@ public class Amplifier extends Robot {
         super(rc);
     }
     void play(){
-        printIslands();
         memoryWells();
         moveToTarget();
     }
 
     void moveToTarget(){
         if(!rc.isMovementReady()) return;
-        rc.setIndicatorString("Trying to move");
+//        rc.setIndicatorString("Trying to move");
         MapLocation loc = getTarget();
-        if (loc != null) rc.setIndicatorString("Target not null!: " + loc.toString());
+//        if (loc != null) rc.setIndicatorString("Target not null!: " + loc.toString());
         bfs.move(loc);
     }
 
     MapLocation getTarget(){
         MapLocation loc = explore.getExploreTarget(false);
         return loc;
-    }
-
-    void printIslands(){
-        try{
-            for(int i = 0; i < 33; i++){
-                System.out.println(rc.readSharedArray(i));
-            }
-        }catch(Exception e){
-            e.printStackTrace();
-        }
     }
 
 

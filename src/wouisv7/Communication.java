@@ -156,7 +156,7 @@ public class Communication {
     }
 
     void reportIsland(MapLocation islandLoc, int id) throws GameActionException{
-        System.out.println("REPORTED " + id);
+//        System.out.println("REPORTED " + id);
         int newIslandLocCode = Util.encodeLoc(islandLoc);
         if(rc.canWriteSharedArray(id-1, newIslandLocCode)){
             rc.writeSharedArray(id-1, newIslandLocCode);
