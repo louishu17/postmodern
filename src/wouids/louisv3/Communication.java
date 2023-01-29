@@ -15,11 +15,12 @@ public class Communication {
 
 
     static final int HEADQUARTERS_NB_INDEX = 45;
-    static final int HEADQUARTERS_CARRIERS_MADE = 40;
     static final int BUILDING_QUEUE_INDEX = 54;
     static final int HEADQUARTERS_LOC_INDEX = 41;
     static final int CARRIER_COUNT = 60;
     static final int LAUNCHER_COUNT = 59;
+
+    static final int LAUNCHER_REPORT = 40;
 
 
 
@@ -31,7 +32,7 @@ public class Communication {
 
     static int myID;
     static boolean headquarter = false;
-    static boolean soldier = false;
+    static boolean launcher = false;
 
     int horizontalSymmetry;
     int verticalSymmetry;
@@ -42,7 +43,7 @@ public class Communication {
         this.rc = rc;
         myID = rc.getID();
         if(rc.getType() == RobotType.HEADQUARTERS) headquarter = true;
-        if(rc.getType() == RobotType.LAUNCHER) soldier = true;
+        if(rc.getType() == RobotType.LAUNCHER) launcher = true;
         if(headquarter){
 //            System.out.println("HI I'm " + myID + " and I'm setting my location.");
             setHeadquartersLoc();
@@ -71,17 +72,12 @@ public class Communication {
         }
     }
     //only headquarters
-    /*void reportSelf(){
-        try{
-            if(headquarter){
-                int locCode = Util.encodeLoc(rc.getLocation());
-                rc.writeSharedArray(3*myHeadquartersIndex+1, locCode);
-                rc.writeSharedArray(3*myHeadquartersIndex+2, rc.getRoundNum());
-            }
-        }catch(Exception e){
-            e.printStackTrace();
-        }
-    }*/
+//    void reportSelf(){
+//        try{
+//        }catch(Exception e){
+//            e.printStackTrace();
+//        }
+//    }
 
     /**
      * The parameter is a locally stored array of Adamantium wells.
@@ -388,8 +384,8 @@ public class Communication {
     void activateDanger(){
         try{
             int carrierScore = getBuildingScore(RobotType.CARRIER);
-            if (carrierScore <= Util.getMinMiners()) {
-                rc.writeSharedArray(BUILDING_QUEUE_INDEX + RobotType.CARRIER.ordinal(), Util.getMinMiners() + 1);
+            if (carrierScore <= Util.getMinCarriers()) {
+                rc.writeSharedArray(BUILDING_QUEUE_INDEX + RobotType.CARRIER.ordinal(), Util.getMinCarriers() + 1);
             }
         }catch(Exception e){
             e.printStackTrace();

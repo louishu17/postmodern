@@ -3,17 +3,19 @@ package wouids.louisv3;
 import battlecode.common.*;
 
 public class Headquarters2 extends Robot {
-    int carrierScore;
     int launcherScore;
-    int carrierRound = 0;
-    final int CARRIER_WAITING = 20;
+    int carrierScore;
 
     MapLocation closestEnemy = null;
+    static int minSoldierScore = 100;
+
     Headquarters2(RobotController rc){
         super(rc);
+        if (minSoldierScore > Util.getMinCarriers()) minSoldierScore = Util.getMinCarriers();
     }
 
     void play() {
+        computeClosestEnemy();
         int i = 5;
         try {
             while(i-- >= 0){
@@ -26,19 +28,7 @@ public class Headquarters2 extends Robot {
 
     void buildUnit() throws GameActionException{
         if(!rc.isActionReady()) return;
-        if(rc.getRoundNum() < 5){
-            if(rc.getResourceAmount(ResourceType.MANA) >= 60 && constructRobotGreedy(RobotType.LAUNCHER, comm.getClosestEnemyHeadquarters())){
-                comm.reportBuilt(RobotType.LAUNCHER, updateLauncherScore(launcherScore));
-                return;
-            }else{
-                MapLocation closestAdamantium = getClosestAdamantium();
-                if(rc.getResourceAmount(ResourceType.ADAMANTIUM) >= 50 && constructRobotGreedy(RobotType.CARRIER, closestAdamantium)){
-                    comm.reportBuilt(RobotType.CARRIER, updateCarrierScore(carrierScore));
-                    return;
-                }
-            }
-        }
-        computeClosestEnemy();
+
         if(closestEnemy != null){
             if(rc.getRoundNum() > 5) comm.activateDanger();
             if(rc.getResourceAmount(ResourceType.MANA) >= 45 * 5){
@@ -50,40 +40,72 @@ public class Headquarters2 extends Robot {
             }
             return;
         }
-        try{
-            if(rc.getRoundNum() > 1500 && rc.getNumAnchors(Anchor.STANDARD) < rc.getIslandCount()){
-                if (rc.getResourceAmount(ResourceType.ADAMANTIUM) >= 100 && rc.getResourceAmount(ResourceType.MANA) >= 100) {
+
+//        launcherScore = Math.max(comm.getBuildingScore(RobotType.LAUNCHER), minSoldierScore);
+//        carrierScore = comm.getBuildingScore(RobotType.CARRIER);
+
+        if(tryBuildAnchor()) return;
+        if(tryBuildAmplifier()) return;
+        if(tryBuildCarrier()) return;
+        if(tryBuildLauncher()) return;
+    }
+
+    boolean tryBuildAnchor(){
+        try {
+            if (rc.getNumAnchors(Anchor.STANDARD) < rc.getIslandCount()) {
+                if (rc.getRoundNum() > 1500 && rc.getResourceAmount(ResourceType.ADAMANTIUM) >= 80 && rc.getResourceAmount(ResourceType.MANA) >= 80) {
                     rc.buildAnchor(Anchor.STANDARD);
                     //System.out.println("MADE ANCHOR");
+                    return true;
                 }
-                return;
             }
-        } catch(Exception e){
+            return false;
+        }catch(Exception e){
             e.printStackTrace();
         }
-
-        if(closestEnemy == null || carrierScore < 0){
-            if(rc.getResourceAmount(ResourceType.ADAMANTIUM) >= Constants.MIN_ADAMANTIUM_STOP_MINERS && rc.getResourceAmount(ResourceType.MANA) >= Constants.MIN_MANA_STOP_MINERS){
-                if(carrierScore <= launcherScore){
-                    comm.reportBuilt(RobotType.CARRIER, updateCarrierScore(carrierScore) + Util.getMinMiners());
-                    return;
-                }
-            } else {
-                if (((explore.visibleMana || explore.visibleAdamantium) && rc.getRoundNum() - carrierRound > CARRIER_WAITING) || carrierScore <= launcherScore) {
-                    if (constructRobotGreedy(RobotType.CARRIER, explore.closestAdamantium)) {
-                        comm.reportBuilt(RobotType.CARRIER, updateCarrierScore(carrierScore) + Util.getMinMiners());
-                        carrierRound = rc.getRoundNum();
-                        return;
-                    }
-                }
-            }
-        }
-        if (constructRobotGreedy(RobotType.LAUNCHER, comm.getClosestEnemyHeadquarters())){
-            comm.reportBuilt(RobotType.LAUNCHER, updateLauncherScore(launcherScore));
-        }
-
-
+        return false;
     }
+    boolean tryBuildLauncher(){
+        if (constructRobotGreedy(RobotType.LAUNCHER, comm.getClosestEnemyHeadquarters())){
+//            comm.reportBuilt(RobotType.LAUNCHER, updateLauncherScore(launcherScore));
+            return true;
+        }
+        return false;
+    }
+
+    boolean tryBuildCarrier(){
+        if(rc.getResourceAmount(ResourceType.ADAMANTIUM) >= Constants.MIN_ADAMANTIUM_STOP_MINERS && rc.getResourceAmount(ResourceType.MANA) >= Constants.MIN_MANA_STOP_MINERS){
+//            if(carrierScore <= launcherScore){
+//                comm.reportBuilt(RobotType.CARRIER, updateCarrierScore(carrierScore));
+//            }
+            return false;
+        }
+
+//        if (carrierScore > launcherScore) return false;
+
+        MapLocation closestWellTarget = explore.getClosestMana();
+        if(closestWellTarget == null){
+            closestWellTarget = explore.getClosestAdamantium();
+        }
+
+        if (constructRobotGreedy(RobotType.CARRIER, closestWellTarget)) {
+//            comm.reportBuilt(RobotType.CARRIER, updateCarrierScore(carrierScore));
+            return true;
+        }
+
+        return false;
+    }
+
+    boolean tryBuildAmplifier(){
+        if (rc.getRoundNum() < 5 || rc.getResourceAmount(ResourceType.MANA) < 60 || rc.getResourceAmount(ResourceType.ADAMANTIUM) < 80) return false;
+
+        if (constructRobotGreedy(RobotType.AMPLIFIER, null)) {
+//            comm.reportBuilt(RobotType.BUILDER, updateBuilderScore(builderScore));
+            return true;
+        }
+        return false;
+    }
+
 
     boolean constructRobotGreedy(RobotType t){
         return constructRobotGreedy(t, null);
@@ -134,6 +156,10 @@ public class Headquarters2 extends Robot {
     }
 
     int updateLauncherScore(int oldScore){
+        if (oldScore < Util.getMinCarriers()){
+            if (oldScore + 3 > Util.getMinCarriers()) return Util.getMinCarriers();
+            return oldScore + 3;
+        }
         return oldScore + 1;
     }
 
