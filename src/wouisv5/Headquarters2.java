@@ -72,7 +72,10 @@ public class Headquarters2 extends Robot {
         if(rc.getResourceAmount(ResourceType.MANA) < 45){
             return false;
         }
-        if (constructRobotGreedy(RobotType.LAUNCHER, comm.getClosestEnemyHeadquarters())){
+        if(comm.curEnemyHQTarget == null){
+            comm.getClosestEnemyHeadquarters();
+        }
+        if (constructRobotGreedy(RobotType.LAUNCHER, comm.curEnemyHQTarget)){
 //            comm.reportBuilt(RobotType.LAUNCHER, updateLauncherScore(launcherScore));
             return true;
         }
