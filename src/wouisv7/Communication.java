@@ -448,4 +448,31 @@ public class Communication {
         return loc;
     }
 
+    int getClosestIslandIndex(MapLocation closestHQ) throws GameActionException{
+        int i = -1;
+        while(i++ < rc.readSharedArray(HEADQUARTERS_NB_INDEX) - 1) {
+            if(Util.getLocation(rc.readSharedArray(HEADQUARTERS_LOC_INDEX + i)) == closestHQ) {
+                return rc.readSharedArray(34 + i);
+            }
+        }
+        return -1; //should never return this
+    }
+
+    void updateClosestIsland() throws GameActionException{
+        int i = -1;
+        MapLocation myLoc = rc.getLocation();
+        int closestDist = 10000;
+        int indexToBeReturned = -1; //returns -1 if no islands in the array
+        while(i++ < 33) {
+            if(rc.readSharedArray(i) != 0) {
+                int currentDist = myLoc.distanceSquaredTo(Util.getLocation(rc.readSharedArray(i)));
+                if(currentDist < closestDist) {
+                    indexToBeReturned = i;
+                    closestDist = currentDist;
+                }
+            }
+        }
+        rc.writeSharedArray(HEADQUARTER_INDEX + 34, indexToBeReturned);
+    }
+
 }
