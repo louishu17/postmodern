@@ -1,4 +1,4 @@
-package wouisv6;
+package wouisv7;
 
 import battlecode.common.MapLocation;
 import battlecode.common.RobotController;

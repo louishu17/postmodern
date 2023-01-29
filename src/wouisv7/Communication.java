@@ -1,4 +1,4 @@
-package wouisv6;
+package wouisv7;
 
 import battlecode.common.*;
 
@@ -6,6 +6,7 @@ public class Communication {
     RobotController rc;
 
 
+    static final int ISLAND_LOCS = 20;
 
     static final int HEADQUARTERS_LOC_INDEX = 54;
 
@@ -67,18 +68,6 @@ public class Communication {
             e.printStackTrace();
         }
     }
-    //only headquarters
-    /*void reportSelf(){
-        try{
-            if(headquarter){
-                int locCode = Util.encodeLoc(rc.getLocation());
-                rc.writeSharedArray(3*myHeadquartersIndex+1, locCode);
-                rc.writeSharedArray(3*myHeadquartersIndex+2, rc.getRoundNum());
-            }
-        }catch(Exception e){
-            e.printStackTrace();
-        }
-    }*/
 
     /**
      * The parameter is a locally stored array of Adamantium wells.
@@ -103,7 +92,7 @@ public class Communication {
                 if(rc.readSharedArray(j * 2) == 0) { //if well queue is empty
                     rc.writeSharedArray(j * 2, Util.encodeLoc(wellLoc));
                     rc.writeSharedArray(j * 2 + 1, shortestDist);
-                    break;
+                    return;
                 }
             }
             int k = -1;
@@ -146,7 +135,7 @@ public class Communication {
                 if(rc.readSharedArray(j * 2 + 10) == 0) { //if well queue is empty
                     rc.writeSharedArray(j * 2 + 10, Util.encodeLoc(wellLoc));
                     rc.writeSharedArray(j * 2 + 11, shortestDist);
-                    break;
+                    return;
                 }
             }
             int k = -1;
@@ -162,6 +151,23 @@ public class Communication {
             if(shortestDist < longestDist) { //if well is closer than the farthest known well, replaces it in the queue
                 rc.writeSharedArray(indexToBeReplaced, Util.encodeLoc(wellLoc));
                 rc.writeSharedArray(indexToBeReplaced + 1, shortestDist);
+            }
+        }
+    }
+
+    void reportIsland(MapLocation islandLoc) throws GameActionException{
+        int i = -1;
+        while(i++ < Constants.NB_REPORT_ISLANDS){
+            if(rc.readSharedArray(i + ISLAND_LOCS) == 0){
+                int newIslandLocCode = Util.encodeLoc(islandLoc);
+                rc.writeSharedArray(i + ISLAND_LOCS, newIslandLocCode);
+                break;
+            }
+
+            int encodedIslandLoc = rc.readSharedArray(i + ISLAND_LOCS);
+            MapLocation commIslandLoc = Util.getLocation(encodedIslandLoc);
+            if (commIslandLoc.equals(islandLoc)){
+                return;
             }
         }
     }
