@@ -132,7 +132,7 @@ public class Pathfinding {
         }
     }
 
-    boolean checkCurrent(Direction dir, Direction currentDir){
+    public boolean checkCurrent(Direction dir, Direction currentDir){
         if(currentDir == Direction.CENTER){
             return true;
         }

@@ -25,7 +25,7 @@ public abstract class Robot {
 
     public Robot(RobotController rc){
         this.rc = rc;
-        bfs = new BFS(rc);
+        bfs = new SoldierPathing(rc);
         explore = new Explore(rc);
         comm = new Communication(rc);
         if(rc.getType() == RobotType.CARRIER) isCarrier = true;
@@ -174,9 +174,9 @@ public abstract class Robot {
             this.health = r.getHealth();
             this.mloc = r.getLocation();
             switch(r.getType()){
-                case HEADQUARTERS:
-                    priority = 6;
-                    break;
+//                case HEADQUARTERS:
+//                    priority = 6;
+//                    break;
                 case LAUNCHER:
                     priority = 5;
                     break;

@@ -1,403 +1,192 @@
-# Written by Tim Kaler (tfk) --- this is some version of my pathing codegen for battlecode 2022. Not sure if its the final version or not. 
-
-VISION_RADIUS_SQ = 20
-
-
-
-
-pre_valid_offsets = []
-
-for dx in range(-10,10):
-  for dy in range(-10,10):
-    if dx**2 + dy**2 <= VISION_RADIUS_SQ:
-      pre_valid_offsets.append((dx**2+dy**2,dx,dy))
-
-pre_valid_offsets = (sorted(pre_valid_offsets))[::-1]
-
-
-valid_offsets = []
-for offset in pre_valid_offsets:
-  valid_offsets.append((offset[1],offset[2]))
-
-
-offset_ring_index = dict()
-for offset in valid_offsets:
-  offset_ring_index[offset] = 100
-
-offset_ring_index[(0,0)] = 0
-
-all_offset_set = False
-while not all_offset_set:
-  all_offset_set = True
-  for offset in valid_offsets:
-    for dx in range (-1, 2):
-      for dy in range (-1, 2):
-        if (dx==dy and dy == 0) \
-	    or (offset[0]+dx, offset[1]+dy) not in offset_ring_index:
-          continue
-        if offset_ring_index[offset] > offset_ring_index[(offset[0]+dx, offset[1] + dy)] + 1:
-          offset_ring_index[offset] = offset_ring_index[(offset[0]+dx, offset[1]+dy)] + 1
-          all_offset_set = False
-
-def get_adjacent_offsets_towards_origin(offset):
-  neighbor_list = []
-  for dx in range (-1,2):
-    for dy in range (-1,2):
-      if (dx==dy and dy == 0) \
-          or (offset[0]+dx, offset[1]+dy) not in offset_ring_index:
-        continue
-      if offset_ring_index[offset] < offset_ring_index[(offset[0]+dx, offset[1]+dy)]:
-        neighbor_list.append((offset[0]+dx, offset[1]+dy))
-  return neighbor_list
-
-
-
-def get_location_var_name(offset):
-  dx = offset[0]
-  dy = offset[1]
-  if dx < 0:
-    dx = "m"+str(abs(dx))
-  else:
-    dx = str(dx)
-  if dy < 0:
-    dy = "m"+str(abs(dy))
-  else:
-    dy = str(dy)
-  return "location_" + dx + "_" + dy
-
-
-def get_distance_var_name(offset):
-  dx = offset[0]
-  dy = offset[1]
-  if dx < 0:
-    dx = "m"+str(abs(dx))
-  else:
-    dx = str(dx)
-  if dy < 0:
-    dy = "m"+str(abs(dy))
-  else:
-    dy = str(dy)
-  return "distance_" + dx + "_" + dy
-
-def get_rubble_var_name(offset):
-  dx = offset[0]
-  dy = offset[1]
-  if dx < 0:
-    dx = "m"+str(abs(dx))
-  else:
-    dx = str(dx)
-  if dy < 0:
-    dy = "m"+str(abs(dy))
-  else:
-    dy = str(dy)
-  return "rubble_" + dx + "_" + dy
-
-
-def declare_rubble_vars(valid_offsets):
-  statement_list = []
-  for offset in valid_offsets:
-    varname = get_rubble_var_name(offset)
-    statement = "public static double " + varname + ";"
-    statement_list.append(statement)
-    #print statement
-  #print len(statement_list)
-  return "\n".join(statement_list)
-
-def declare_location_vars(valid_offsets):
-  statement_list = []
-  for offset in valid_offsets:
-    varname = get_location_var_name(offset)
-    statement = "public static MapLocation " + varname + ";"
-    statement_list.append(statement)
-    #print statement
-  #print len(statement_list)
-  return "\n".join(statement_list)
-
-def declare_distance_vars(valid_offsets):
-  statement_list = [] 
-  for offset in valid_offsets:
-    varname = get_distance_var_name(offset)
-    statement = "public static double " + varname + ";"
-    statement_list.append(statement)
-  return "\n".join(statement_list)
-
-
-def init_rubble_vars(valid_offsets):
-  statement_list = []
-  statement_template = """
-    @{varname_location} = rc.getLocation().translate(@{offset_0}, @{offset_1});
-    if (rc.onTheMap(@{varname_location})) {
-      @{varname} = 1.0 + rc.senseRubble(@{varname_location})/10.0;
-      @{varname_distance} = 10*Math.sqrt(@{varname_location}.distanceSquaredTo(target));
-    } else {
-      @{varname} = 100000000.0;
-      @{varname_distance} = 100000000.0;
-    }
-    """
-  for offset in valid_offsets:
-    varname = get_rubble_var_name(offset)
-    statement = statement_template.replace("@{offset_0}", str(offset[0])).replace("@{offset_1}", str(offset[1])).replace("@{varname}", varname).replace("@{varname_distance}", get_distance_var_name(offset)).replace("@{varname_location}", get_location_var_name(offset))
-    #statement = varname + " = rc.senseRubble(rc.getLocation().translate("+str(offset[0])+"," + str(offset[1]) +"))/10.0;"
-    statement_list.append(statement)
-    #print statement
-  #print len(statement_list)
-  return "\n".join(statement_list)
-
-def init_rubble_vars_specialized(valid_offsets, min_dx, max_dx, min_dy, max_dy):
-  statement_list = []
-
-  statement_template_onmap = """
-    @{varname_location} = rc.getLocation().translate(@{offset_0}, @{offset_1});
-    @{varname} = 1.0;
-    @{varname_distance} = 10*Math.sqrt(@{varname_location}.distanceSquaredTo(target));
-    """
-
-  statement_template_offmap = """
-    @{varname_location} = rc.getLocation().translate(@{offset_0}, @{offset_1});
-    @{varname} = 100000000.0;
-    @{varname_distance} = 100000000.0;
-    """
-
-  for offset in valid_offsets:
-    statement_template = None
-    if offset[0] >= min_dx and offset[0] <= max_dx and offset[1] >= min_dy and offset[1] <= max_dy:
-        # on the map
-        statement_template = statement_template_onmap
-    else:
-        # off the map
-        statement_template = statement_template_offmap
-    varname = get_rubble_var_name(offset)
-    statement = statement_template.replace("@{offset_0}", str(offset[0])).replace("@{offset_1}", str(offset[1])).replace("@{varname}", varname).replace("@{varname_distance}", get_distance_var_name(offset)).replace("@{varname_location}", get_location_var_name(offset))
-    #statement = varname + " = rc.senseRubble(rc.getLocation().translate("+str(offset[0])+"," + str(offset[1]) +"))/10.0;"
-    statement_list.append(statement)
-    #print statement
-  #print len(statement_list)
-  return "\n".join(statement_list)
-   
-
-
- 
-def relaxation(valid_offsets):
-  statement_list = []
-
-  template = """
-  if (@{point_dist} > @{neighbor_dist} + @{neighbor_cost}) {
-    @{point_dist} = @{neighbor_dist} + @{neighbor_cost};
-  }
-  """
-  for offset in valid_offsets:
-    if offset == (0,0):
-      continue
-    neighbors = get_adjacent_offsets_towards_origin(offset)
-    for n in neighbors:
-      statement = template.replace("@{neighbor_dist}", get_distance_var_name(n)).replace("@{neighbor_cost}", get_rubble_var_name(n)).replace("@{point_dist}", get_distance_var_name(offset))
-      statement_list.append(statement)
-  return "\n".join(statement_list)
- 
-def choose_best_location(valid_offsets):
-  statement_list = []
-
-  statement_list.append("MapLocation best_location = null;")
-  statement_list.append("//distance_0_0 = 100000000;")
-
-  template = """
-  if (@{point_dist} > @{neighbor_dist} + @{neighbor_cost} && !rc.isLocationOccupied(@{neighbor_loc})) {
-    @{point_dist} = @{neighbor_dist} + @{neighbor_cost};
-    best_location = @{neighbor_loc};
-  }
-  """
-  for offset in valid_offsets:
-    if offset != (0,0):
-      continue
-    neighbors = get_adjacent_offsets_towards_origin(offset)
-    for n in neighbors:
-      statement = template.replace("@{neighbor_dist}", get_distance_var_name(n)).replace("@{neighbor_cost}", get_rubble_var_name(n)).replace("@{point_dist}", get_distance_var_name(offset)).replace("@{neighbor_loc}", get_location_var_name(n))
-      statement_list.append(statement)
-
-
-  end_of_statement = """ if (best_location == null && ten_pointo != 10.0) { 
-      ten_pointo_value = 10.0;
-      MapLocation res = do_BF(target); 
-      ten_pointo_value = ten_pointo_value_default;
-      return res; 
-  } 
-  if (best_location != null) {
-      rc.setIndicatorDot(best_location, 0, 0, 255); 
-  } else { 
-      rc.setIndicatorDot(rc.getLocation(), 100,100,100); 
-  }
-  return best_location; 
-  """
-
-  #statement_list.append("return best_location;")
-  statement_list.append(end_of_statement)
-  return "\n".join(statement_list)
-
-
-extra_methods = ""
-
-def expand_base(name):
-    global valid_offsets
-    global extra_methods
-
-    #print name
-    arglist = name.replace("test_function_", "").split("_")[1:]
-    #print arglist
-
-    min_dx = None
-    max_dx = None
-    if arglist[0] == "default":
-        max_dx = 100
-    else:
-        max_dx = int(arglist[0])
-
-    if arglist[1] == "default":
-        min_dx = -100
-    else:
-        min_dx = -1 * int(arglist[1])
-
-    if arglist[2] == "default":
-        max_dy = 100
-    else:
-        max_dy = int(arglist[2])
-
-    if arglist[3] == "default":
-        min_dy = -100
-    else:
-        min_dy = -1*int(arglist[3])
-    extra_methods += "static public void generated_" + name + "(MapLocation target) throws GameActionException {\n" +init_rubble_vars_specialized(valid_offsets, min_dx, max_dx, min_dy, max_dy) + "\n}"
-    return "generated_" + name + "(target);"
-
-    #print str((max_dx, min_dx, max_dy, min_dy))
-    #return "".join(arglist)
-
-
-
-def switch_statement(switch_dict, case_chain):
-
-    line_list = []
-    line_list.append("switch(" + switch_dict["switch_key"] + ") {") 
-
-
-    copied_dict = dict()
-    default_case = None
-    switch_key = None
-
-    for x in switch_dict.keys():
-        if x == "default":
-            if type(switch_dict[x]) is dict:
-                default_case = switch_statement(switch_dict[x], case_chain + "_default")
-            else:
-                default_case = switch_dict[x].replace("@{CASECHAIN}", expand_base(case_chain + "_default"))
-            continue
-        if x == "switch_key":
-            switch_key = switch_dict[x]
-            continue
-        if type(switch_dict[x]) is dict:
-            copied_dict[x] = switch_statement(switch_dict[x], case_chain + "_" + str(x))
-        else:
-            copied_dict[x] = switch_dict[x].replace("@{CASECHAIN}", expand_base(case_chain + "_" + str(x)))
-
-    for x in copied_dict.keys():
-        line_list.append("case " + str(x) + ":")
-        line_list.append(copied_dict[x])
-        line_list.append("break;")
-    line_list.append("default:")
-    line_list.append(default_case)
-    line_list.append("break;")
-    line_list.append("}")
-    data = "\n".join(line_list)
-    return data
-
-
-
-
-
-
-def gen_switches():
-    yswitch_inner = dict()
-    yswitch_inner["switch_key"] = "rc.getLocation().y"
-    yswitch_inner["default"] = "@{CASECHAIN}"
-    yswitch_inner[0] = "@{CASECHAIN}"
-    yswitch_inner[1] = "@{CASECHAIN}"
-    yswitch_inner[2] = "@{CASECHAIN}"
-    yswitch_inner[3] = "@{CASECHAIN}"
-
-    yswitch_inner_sparse = dict()
-    yswitch_inner_sparse["switch_key"] = "rc.getLocation().y"
-    yswitch_inner_sparse["default"] = "@{CASECHAIN}"
-
-    yswitch_outer = dict()
-    yswitch_outer["switch_key"] = "rc.getMapHeight() - 1 - rc.getLocation().y"
-
-    yswitch_outer["default"] = yswitch_inner
-    yswitch_outer[0] = yswitch_inner_sparse
-    yswitch_outer[1] = yswitch_inner_sparse
-    yswitch_outer[2] = yswitch_inner_sparse
-    yswitch_outer[3] = yswitch_inner_sparse
-
-
-    xswitch_inner = dict()
-    xswitch_inner["switch_key"] = "rc.getLocation().x"
-    xswitch_inner["default"] = yswitch_outer
-    xswitch_inner[0] = yswitch_outer
-    xswitch_inner[1] = yswitch_outer
-    xswitch_inner[2] = yswitch_outer
-    xswitch_inner[3] = yswitch_outer
-    xswitch_inner[4] = yswitch_outer
-
-    xswitch_inner_sparse = dict()
-    xswitch_inner_sparse["switch_key"] = "rc.getLocation().x"
-    xswitch_inner_sparse["default"] = yswitch_outer
-
-
-    xswitch_outer = dict()
-    xswitch_outer["switch_key"] = "rc.getMapWidth() - 1 - rc.getLocation().x"
-    xswitch_outer["default"] = xswitch_inner
-    xswitch_outer[0] = xswitch_inner_sparse
-    xswitch_outer[1] = xswitch_inner_sparse
-    xswitch_outer[2] = xswitch_inner_sparse
-    xswitch_outer[3] = xswitch_inner_sparse
-    xswitch_outer[4] = xswitch_inner_sparse
-
-    #print switch_statement(xswitch_outer, "")
-    return switch_statement(xswitch_outer, "")
-
-
-
-
-
-
-
-
-
-
-print ("""import battlecode.common.*;
-
-public class NavigationBF {
-    // Static variable declarations
-        public static RobotController rc;
-        public static int NUM_ITERS = 1;
-        public static double ten_pointo_value_default = 2.0;
-        public static double ten_pointo_value = ten_pointo_value_default;
+import sys
+from pathlib import Path
+
+def encode(x, y):
+    return (x+7) + 15*(y+7)
+
+# Note: Sage should be (34, 20) but we've reduced for bytecode reasons
+# Note: Builder should be (20, 10) but we've reduced for bytecode reasons
+RADII = {'Miner': 20, 'Builder': 13, 'Soldier': 20, 'Sage': 20, 'Archon': 34, 'Watchtower': 34, 'Laboratory': 20}
+SMALLER_RADII = {'Miner': 10, 'Builder': 5, 'Soldier': 10, 'Sage': 10, 'Archon': 20, 'Watchtower': 20, 'Laboratory': 10}
+
+DIRECTIONS = {
+    (1, 0): 'Direction.EAST',
+    (-1, 0): 'Direction.WEST',
+    (0, 1): 'Direction.NORTH',
+    (0, -1): 'Direction.SOUTH',
+    (1, 1): 'Direction.NORTHEAST',
+    (-1, 1): 'Direction.NORTHWEST',
+    (1, -1): 'Direction.SOUTHEAST',
+    (-1, -1): 'Direction.SOUTHWEST',
+}
+
+def dist(x, y):
+    return x*x + y*y
+
+def gen_constants(radius):
+    out = f""""""
+    for x in range(-7, 8):
+        for y in range(-7, 8):
+            if dist(x, y) <= radius:
+                out += f"""
+    static MapLocation l{encode(x,y)}; // location representing relative coordinate ({x}, {y})
+    static int d{encode(x,y)}; // shortest distance to location from current location
+    static Direction dir{encode(x,y)}; // best direction to take now to optimally get to location
+"""
+    return out
+
+def sign(x):
+    if x > 0:
+        return 1
+    if x < 0:
+        return -1
+    return 0
+
+def gen_init(radius):
+    out = f"""
+        l{encode(0,0)} = rc.getLocation();
+        d{encode(0,0)} = 0;
+        dir{encode(0,0)} = Direction.CENTER;
+"""
+    for r2 in range(1, radius+1):
+        for x in range(-7, 8):
+            for y in range(-7, 8):
+                if dist(x, y) == r2:
+                    out += f"""
+        l{encode(x,y)} = l{encode(x - sign(x), y - sign(y))}.add({DIRECTIONS[(sign(x), sign(y))]}); // ({x}, {y}) from ({x - sign(x)}, {y - sign(y)})
+        d{encode(x,y)} = 99999;
+        dir{encode(x,y)} = null;
+"""
+    return out
+
+def gen_bfs(radius):
+    visited = set([encode(0,0)])
+    out = f"""
+"""
+    for r2 in range(1, radius+1):
+        for x in range(-7, 8):
+            for y in range(-7, 8):
+                if dist(x, y) == r2:
+                    out += f"""
+        if (rc.canSenseLocation(l{encode(x,y)}) && rc.senseMapInfo(l{encode(x,y)}).isPassable()) {{ // check ({x}, {y})"""
+                    indent = ""
+                    if r2 <= 2:
+                        out += f"""
+            if (!rc.isLocationOccupied(l{encode(x,y)})) {{ """
+                        indent = "    "
+                    dxdy = [(dx, dy) for dx in range(-1, 2) for dy in range(-1, 2) if (dx, dy) != (0, 0) and dist(x+dx,y+dy) <= radius]
+                    dxdy = sorted(dxdy, key=lambda dd: dist(x+dd[0], y+dd[1]))
+                    for dx, dy in dxdy:
+                        if encode(x+dx, y+dy) in visited:
+                            out += f"""
+            {indent}if (d{encode(x,y)} > d{encode(x+dx,y+dy)}) {{ // from ({x+dx}, {y+dy})
+                {indent}d{encode(x,y)} = d{encode(x+dx,y+dy)};
+                {indent}dir{encode(x,y)} = {DIRECTIONS[(-dx, -dy)] if (x+dx,y+dy) == (0, 0) else f'dir{encode(x+dx,y+dy)}'};
+            {indent}}}"""
+                    out += f"""
+            {indent}d{encode(x,y)} += 10;"""
+                    if r2 <= 2:
+                        out += f"""
+            }}"""
+                    visited.add(encode(x,y))
+                    out += f"""
+        }}
+"""
+    return out
+
+def gen_selection(radius, smaller_radius):
+    out = f"""
+        int target_dx = target.x - l{encode(0,0)}.x;
+        int target_dy = target.y - l{encode(0,0)}.y;
+        switch (target_dx) {{"""
+    for tdx in range(-7, 8):
+        if tdx**2 <= radius:
+            out += f"""
+                case {tdx}:
+                    switch (target_dy) {{"""
+            for tdy in range(-7, 8):
+                if dist(tdx, tdy) <= radius:
+                    out += f"""
+                        case {tdy}:
+                            return dir{encode(tdx, tdy)}; // destination is at relative location ({tdx}, {tdy})"""
+            out += f"""
+                    }}
+                    break;"""
+    out += f"""
+        }}
+        
+        Direction ans = null;
+        double bestScore = 0;
+        double currDist = Math.sqrt(l{encode(0,0)}.distanceSquaredTo(target));
+        """
+    for x in range(-7, 8):
+        for y in range(-7, 8):
+            if smaller_radius < dist(x, y) <= radius: # on the edge of the radius radius
+                out += f"""
+        double score{encode(x,y)} = (currDist - Math.sqrt(l{encode(x,y)}.distanceSquaredTo(target))) / d{encode(x,y)};
+        if (score{encode(x,y)} > bestScore) {{
+            bestScore = score{encode(x,y)};
+            ans = dir{encode(x,y)};
+        }}
+"""
+    return out
+
+def gen_print(radius):
+    out = f"""
+        // System.out.println("LOCAL DISTANCES:");"""
+    for y in range(7, -8, -1):
+        if y**2 <= radius:
+            out += f"""
+        // System.out.println("""
+            for x in range(-7, 8):
+                if dist(x, y) <= radius:
+                    out += f""""\\t" + d{encode(x,y)} + """
+                else:
+                    out += f""""\\t" + """
+            out = out[:-3] + """);"""
+    out += f"""
+        // System.out.println("DIRECTIONS:");"""
+    for y in range(7, -8, -1):
+        if y**2 <= radius:
+            out += f"""
+        // System.out.println("""
+            for x in range(-7, 8):
+                if dist(x, y) <= radius:
+                    out += f""""\\t" + dir{encode(x,y)} + """
+                else:
+                    out += f""""\\t" + """
+            out = out[:-3] + """);"""
+    return out
+
+def gen_full(bot, unit):
+    radius = RADII[unit]
+    smaller_radius = SMALLER_RADII[unit]
+    out_file = Path('./src/') / bot / f'{unit}Pathing.java'
+    with open(out_file, 'w') as f:
+        f.write(f"""// Inspired by https://github.com/IvanGeffner/battlecode2021/blob/master/thirtyone/BFSMuckraker.java.
+package {bot};
+
+import battlecode.common.*;
+
+public class {unit}Pathing implements UnitPathing {{
+    
+    RobotController rc;
+{gen_constants(radius)}
+
+    public {unit}Pathing(RobotController rc) {{
+        this.rc = rc;
+    }}
+
+    public Direction bestDir(MapLocation target) throws GameActionException {{
+{gen_init(radius)}
+{gen_bfs(radius)}
+{gen_print(radius)}
+{gen_selection(radius, smaller_radius)}
+        
+        return ans;
+    }}
+}}
 """)
 
-print (declare_rubble_vars(valid_offsets))
-print (declare_distance_vars(valid_offsets))
-print (declare_location_vars(valid_offsets))
-print ("static public MapLocation do_BF(MapLocation target) throws GameActionException {")
-print ("int ten = 10;")
-print ("double ten_pointo = ten_pointo_value;")
-#print init_rubble_vars(valid_offsets)
-print (gen_switches())
-print ("for (int iter  = 0; iter < NUM_ITERS; iter++) {")
-print (relaxation(valid_offsets))
-print ("}")
-print (choose_best_location(valid_offsets))
-print ("}")
-print (extra_methods)
-print ("}")
- 
-
-    
-
+if __name__ == '__main__':
+    gen_full(sys.argv[1], sys.argv[2])
