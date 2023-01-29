@@ -67,7 +67,7 @@ public abstract class BFS {
             }
             t = Clock.getBytecodesLeft() - t;
             rc.setIndicatorString("Using bfs!!! " + t);
-            if (dir != null && !mapTracker.check(rc.getLocation().add(dir))){
+            if (dir != null && !mapTracker.check(rc.getLocation().add(dir)) && rc.getRoundNum() % 2 != 0){
                 move(dir);
                 return;
             } else activateGreedy();

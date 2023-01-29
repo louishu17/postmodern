@@ -14,12 +14,14 @@ public class Communication {
     static final int MANA_QUEUE_SIZE = 9;
 
 
-    static final int HEADQUARTERS_NB_INDEX = 45;
-    static final int HEADQUARTERS_CARRIERS_MADE = 40;
-    static final int BUILDING_QUEUE_INDEX = 54;
-    static final int HEADQUARTERS_LOC_INDEX = 41;
-    static final int CARRIER_COUNT = 60;
+    static final int HEADQUARTERS_LOC_INDEX = 54;
+
+    static final int HEADQUARTERS_NB_INDEX = 58;
+//    static final int HEADQUARTERS_CARRIERS_MADE = 40;
+//    static final int BUILDING_QUEUE_INDEX = 54;
+
     static final int LAUNCHER_COUNT = 59;
+    static final int CARRIER_COUNT = 60;
 
 
 
@@ -381,33 +383,33 @@ public class Communication {
         }
     }
 
-    void reportBuilt(RobotType t, int amount){
-        try {
-            rc.writeSharedArray(BUILDING_QUEUE_INDEX + t.ordinal(), amount);
-        } catch (Exception e){
-            e.printStackTrace();
-        }
-    }
-
-    int getBuildingScore(RobotType r){
-        try {
-            return rc.readSharedArray(BUILDING_QUEUE_INDEX + r.ordinal());
-        } catch (Exception e){
-            e.printStackTrace();
-        }
-        return 0;
-    }
-
-    void activateDanger(){
-        try{
-            int carrierScore = getBuildingScore(RobotType.CARRIER);
-            if (carrierScore <= Util.getMinCarriers()) {
-                rc.writeSharedArray(BUILDING_QUEUE_INDEX + RobotType.CARRIER.ordinal(), Util.getMinCarriers() + 1);
-            }
-        }catch(Exception e){
-            e.printStackTrace();
-        }
-    }
+//    void reportBuilt(RobotType t, int amount){
+//        try {
+//            rc.writeSharedArray(BUILDING_QUEUE_INDEX + t.ordinal(), amount);
+//        } catch (Exception e){
+//            e.printStackTrace();
+//        }
+//    }
+//
+//    int getBuildingScore(RobotType r){
+//        try {
+//            return rc.readSharedArray(BUILDING_QUEUE_INDEX + r.ordinal());
+//        } catch (Exception e){
+//            e.printStackTrace();
+//        }
+//        return 0;
+//    }
+//
+//    void activateDanger(){
+//        try{
+//            int carrierScore = getBuildingScore(RobotType.CARRIER);
+//            if (carrierScore <= Util.getMinCarriers()) {
+//                rc.writeSharedArray(BUILDING_QUEUE_INDEX + RobotType.CARRIER.ordinal(), Util.getMinCarriers() + 1);
+//            }
+//        }catch(Exception e){
+//            e.printStackTrace();
+//        }
+//    }
 
     MapLocation getClosestAdamantium() throws GameActionException{
         int i = -1;

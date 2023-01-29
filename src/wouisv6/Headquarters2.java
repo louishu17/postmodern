@@ -33,7 +33,7 @@ public class Headquarters2 extends Robot {
         if(!rc.isActionReady()) return;
 
         if(closestEnemy != null){
-            if(rc.getRoundNum() > 5) comm.activateDanger();
+//            if(rc.getRoundNum() > 5) comm.activateDanger();
             if(rc.getResourceAmount(ResourceType.MANA) >= 45 * 5){
                 int j = 5;
                 while (j-- >= 0) {

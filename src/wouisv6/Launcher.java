@@ -116,7 +116,7 @@ public class Launcher extends Robot {
     }
 
     MapLocation checkIfNeedNewEnemyHQTarget(){
-        if(comm.curEnemyHQTarget != null && comm.curEnemyHQTarget.isWithinDistanceSquared(rc.getLocation(),RobotType.LAUNCHER.actionRadiusSquared+10) && !found){
+        if(comm.curEnemyHQTarget != null && comm.curEnemyHQTarget.isWithinDistanceSquared(rc.getLocation(),RobotType.LAUNCHER.visionRadiusSquared + 10) && !found){
             comm.getClosestEnemyHeadquarters();
         }
         return comm.curEnemyHQTarget;
