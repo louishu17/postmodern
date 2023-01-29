@@ -30,7 +30,7 @@ public strictfp class RobotPlayer {
         Robot robot;
         switch(rc.getType()){
             case HEADQUARTERS:
-                robot = new Headquarters(rc);
+                robot = new Headquarters2(rc);
                 break;
             case CARRIER:
                 robot = new Carrier(rc);

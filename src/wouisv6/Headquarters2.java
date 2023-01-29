@@ -72,7 +72,10 @@ public class Headquarters2 extends Robot {
         if(rc.getResourceAmount(ResourceType.MANA) < 45){
             return false;
         }
-        if (constructRobotGreedy(RobotType.LAUNCHER, comm.getClosestEnemyHeadquarters())){
+        if(comm.curEnemyHQTarget == null){
+            comm.getClosestEnemyHeadquarters();
+        }
+        if (constructRobotGreedy(RobotType.LAUNCHER, comm.curEnemyHQTarget)){
 //            comm.reportBuilt(RobotType.LAUNCHER, updateLauncherScore(launcherScore));
             return true;
         }
@@ -154,7 +157,7 @@ public class Headquarters2 extends Robot {
         try{
             RobotInfo[] enemies = rc.senseNearbyRobots(rc.getLocation(), rc.getType().visionRadiusSquared, rc.getTeam().opponent());
             for (RobotInfo enemy : enemies){
-                if (!wouids.louisv3.Util.isAttacker(enemy.getType())) continue;
+                if (!Util.isAttacker(enemy.getType())) continue;
                 int d = enemy.getLocation().distanceSquaredTo(myLoc);
                 if (closestEnemy == null || d < closestDist){
                     closestEnemy = enemy.location;
