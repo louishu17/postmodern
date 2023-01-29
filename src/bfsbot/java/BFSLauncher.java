@@ -706,7 +706,7 @@ public class BFSLauncher extends BFS {
                     }
                 }
             }
-            if (rc.onTheMap(l58)) {
+            if (rc.onTheMap(l58) && rc.senseMapInfo(l58).isPassable()) {
                 p58 = 10;
                 if (v71 > v70) {
                     if (v70 > v72) {
@@ -726,7 +726,7 @@ public class BFSLauncher extends BFS {
                     }
                 }
             }
-            if (rc.onTheMap(l82)) {
+            if (rc.onTheMap(l82)  && rc.senseMapInfo(l82).isPassable()) {
                 p82 = 10;
                 if (v83 > v70) {
                     if (v70 > v96) {
@@ -746,7 +746,7 @@ public class BFSLauncher extends BFS {
                     }
                 }
             }
-            if (rc.onTheMap(l86)) {
+            if (rc.onTheMap(l86) && rc.senseMapInfo(l86).isPassable()) {
                 p86 = 10;
                 if (v85 > v72) {
                     if (v72 > v98) {
@@ -766,7 +766,7 @@ public class BFSLauncher extends BFS {
                     }
                 }
             }
-            if (rc.onTheMap(l110)) {
+            if (rc.onTheMap(l110) && rc.senseMapInfo(l110).isPassable()) {
                 p110 = 10;
                 if (v97 > v98) {
                     if (v98 > v96) {
@@ -786,7 +786,7 @@ public class BFSLauncher extends BFS {
                     }
                 }
             }
-            if (rc.onTheMap(l57)) {
+            if (rc.onTheMap(l57) && rc.senseMapInfo(l57).isPassable()) {
                 p57 = 10;
                 if (v71 > v70) {
                     if (v70 > v58) {
@@ -806,7 +806,7 @@ public class BFSLauncher extends BFS {
                     }
                 }
             }
-            if (rc.onTheMap(l59)) {
+            if (rc.onTheMap(l59) && rc.senseMapInfo(l59).isPassable()) {
                 p59 = 10;
                 if (v71 > v72) {
                     if (v72 > v58) {
@@ -826,7 +826,7 @@ public class BFSLauncher extends BFS {
                     }
                 }
             }
-            if (rc.onTheMap(l69)) {
+            if (rc.onTheMap(l69) && rc.senseMapInfo(l69).isPassable()) {
                 p69 = 10;
                 if (v83 > v70) {
                     if (v70 > v82) {
@@ -866,7 +866,7 @@ public class BFSLauncher extends BFS {
                     }
                 }
             }
-            if (rc.onTheMap(l73)) {
+            if (rc.onTheMap(l73) && rc.senseMapInfo(l73).isPassable()) {
                 p73 = 10;
                 if (v85 > v72) {
                     if (v72 > v86) {
@@ -906,7 +906,7 @@ public class BFSLauncher extends BFS {
                     }
                 }
             }
-            if (rc.onTheMap(l95)) {
+            if (rc.onTheMap(l95) && rc.senseMapInfo(l95).isPassable()) {
                 p95 = 10;
                 if (v83 > v96) {
                     if (v96 > v82) {
@@ -926,7 +926,7 @@ public class BFSLauncher extends BFS {
                     }
                 }
             }
-            if (rc.onTheMap(l99)) {
+            if (rc.onTheMap(l99) && rc.senseMapInfo(l99).isPassable()) {
                 p99 = 10;
                 if (v85 > v98) {
                     if (v98 > v86) {
@@ -946,7 +946,7 @@ public class BFSLauncher extends BFS {
                     }
                 }
             }
-            if (rc.onTheMap(l109)) {
+            if (rc.onTheMap(l109) && rc.senseMapInfo(l109).isPassable()) {
                 p109 = 10;
                 if (v97 > v96) {
                     if (v96 > v110) {
@@ -986,7 +986,7 @@ public class BFSLauncher extends BFS {
                     }
                 }
             }
-            if (rc.onTheMap(l111)) {
+            if (rc.onTheMap(l111) && rc.senseMapInfo(l111).isPassable()) {
                 p111 = 10;
                 if (v97 > v98) {
                     if (v98 > v110) {
@@ -1026,7 +1026,7 @@ public class BFSLauncher extends BFS {
                     }
                 }
             }
-            if (rc.onTheMap(l56)) {
+            if (rc.onTheMap(l56)&& rc.senseMapInfo(l56).isPassable()) {
                 p56 = 10;
                 if (v70 > v57) {
                     if (v57 > v69) {
@@ -1046,7 +1046,7 @@ public class BFSLauncher extends BFS {
                     }
                 }
             }
-            if (rc.onTheMap(l60)) {
+            if (rc.onTheMap(l60) && rc.senseMapInfo(l60).isPassable()) {
                 p60 = 10;
                 if (v72 > v59) {
                     if (v59 > v73) {
@@ -1066,7 +1066,7 @@ public class BFSLauncher extends BFS {
                     }
                 }
             }
-            if (rc.onTheMap(l108)) {
+            if (rc.onTheMap(l108) && rc.senseMapInfo(l108).isPassable()) {
                 p108 = 10;
                 if (v96 > v109) {
                     if (v109 > v95) {
@@ -1086,7 +1086,7 @@ public class BFSLauncher extends BFS {
                     }
                 }
             }
-            if (rc.onTheMap(l112)) {
+            if (rc.onTheMap(l112) && rc.senseMapInfo(l112).isPassable()) {
                 p112 = 10;
                 if (v98 > v99) {
                     if (v99 > v111) {
@@ -1106,7 +1106,7 @@ public class BFSLauncher extends BFS {
                     }
                 }
             }
-            if (rc.onTheMap(l45)) {
+            if (rc.onTheMap(l45) && rc.senseMapInfo(l45).isPassable()) {
                 p45 = 10;
                 if (v58 > v57) {
                     if (v57 > v59) {
@@ -1126,7 +1126,7 @@ public class BFSLauncher extends BFS {
                     }
                 }
             }
-            if (rc.onTheMap(l81)) {
+            if (rc.onTheMap(l81) && rc.senseMapInfo(l81).isPassable()) {
                 p81 = 10;
                 if (v82 > v69) {
                     if (v69 > v95) {
@@ -1146,7 +1146,7 @@ public class BFSLauncher extends BFS {
                     }
                 }
             }
-            if (rc.onTheMap(l87)) {
+            if (rc.onTheMap(l87) && rc.senseMapInfo(l87).isPassable()) {
                 p87 = 10;
                 if (v86 > v73) {
                     if (v73 > v99) {
@@ -1166,7 +1166,7 @@ public class BFSLauncher extends BFS {
                     }
                 }
             }
-            if (rc.onTheMap(l123)) {
+            if (rc.onTheMap(l123) && rc.senseMapInfo(l123).isPassable()) {
                 p123 = 10;
                 if (v110 > v111) {
                     if (v111 > v109) {
@@ -1186,7 +1186,7 @@ public class BFSLauncher extends BFS {
                     }
                 }
             }
-            if (rc.onTheMap(l44)) {
+            if (rc.onTheMap(l44) && rc.senseMapInfo(l44).isPassable()) {
                 p44 = 10;
                 if (v58 > v57) {
                     if (v57 > v56) {
@@ -1226,7 +1226,7 @@ public class BFSLauncher extends BFS {
                     }
                 }
             }
-            if (rc.onTheMap(l46)) {
+            if (rc.onTheMap(l46) && rc.senseMapInfo(l46).isPassable()) {
                 p46 = 10;
                 if (v58 > v59) {
                     if (v59 > v60) {
@@ -1266,7 +1266,7 @@ public class BFSLauncher extends BFS {
                     }
                 }
             }
-            if (rc.onTheMap(l68)) {
+            if (rc.onTheMap(l68) && rc.senseMapInfo(l68).isPassable()) {
                 p68 = 10;
                 if (v82 > v69) {
                     if (v69 > v56) {
@@ -1306,7 +1306,7 @@ public class BFSLauncher extends BFS {
                     }
                 }
             }
-            if (rc.onTheMap(l74)) {
+            if (rc.onTheMap(l74) && rc.senseMapInfo(l74).isPassable()) {
                 p74 = 10;
                 if (v86 > v73) {
                     if (v73 > v60) {
@@ -1346,7 +1346,7 @@ public class BFSLauncher extends BFS {
                     }
                 }
             }
-            if (rc.onTheMap(l94)) {
+            if (rc.onTheMap(l94) && rc.senseMapInfo(l94).isPassable()) {
                 p94 = 10;
                 if (v82 > v95) {
                     if (v95 > v108) {
@@ -1386,7 +1386,7 @@ public class BFSLauncher extends BFS {
                     }
                 }
             }
-            if (rc.onTheMap(l100)) {
+            if (rc.onTheMap(l100) && rc.senseMapInfo(l100).isPassable()) {
                 p100 = 10;
                 if (v86 > v99) {
                     if (v99 > v112) {
@@ -1426,7 +1426,7 @@ public class BFSLauncher extends BFS {
                     }
                 }
             }
-            if (rc.onTheMap(l122)) {
+            if (rc.onTheMap(l122) && rc.senseMapInfo(l122).isPassable()) {
                 p122 = 10;
                 if (v110 > v109) {
                     if (v109 > v108) {
@@ -1466,7 +1466,7 @@ public class BFSLauncher extends BFS {
                     }
                 }
             }
-            if (rc.onTheMap(l124)) {
+            if (rc.onTheMap(l124) && rc.senseMapInfo(l124).isPassable()) {
                 p124 = 10;
                 if (v110 > v111) {
                     if (v111 > v112) {
@@ -1506,7 +1506,7 @@ public class BFSLauncher extends BFS {
                     }
                 }
             }
-            if (rc.onTheMap(l43)) {
+            if (rc.onTheMap(l43) && rc.senseMapInfo(l43).isPassable()) {
                 p43 = 10;
                 if (v57 > v56) {
                     if (v56 > v44) {
@@ -1526,7 +1526,7 @@ public class BFSLauncher extends BFS {
                     }
                 }
             }
-            if (rc.onTheMap(l47)) {
+            if (rc.onTheMap(l47) && rc.senseMapInfo(l47).isPassable()) {
                 p47 = 10;
                 if (v59 > v60) {
                     if (v60 > v46) {
@@ -1546,7 +1546,7 @@ public class BFSLauncher extends BFS {
                     }
                 }
             }
-            if (rc.onTheMap(l55)) {
+            if (rc.onTheMap(l55) && rc.senseMapInfo(l55).isPassable()) {
                 p55 = 10;
                 if (v69 > v56) {
                     if (v56 > v68) {
@@ -1586,7 +1586,7 @@ public class BFSLauncher extends BFS {
                     }
                 }
             }
-            if (rc.onTheMap(l61)) {
+            if (rc.onTheMap(l61) &&  rc.senseMapInfo(l61).isPassable()) {
                 p61 = 10;
                 if (v73 > v60) {
                     if (v60 > v74) {
@@ -1626,7 +1626,7 @@ public class BFSLauncher extends BFS {
                     }
                 }
             }
-            if (rc.onTheMap(l107)) {
+            if (rc.onTheMap(l107) && rc.senseMapInfo(l107).isPassable()) {
                 p107 = 10;
                 if (v95 > v108) {
                     if (v108 > v94) {
@@ -1646,7 +1646,7 @@ public class BFSLauncher extends BFS {
                     }
                 }
             }
-            if (rc.onTheMap(l113)) {
+            if (rc.onTheMap(l113) && rc.senseMapInfo(l113).isPassable()) {
                 p113 = 10;
                 if (v99 > v112) {
                     if (v112 > v100) {
@@ -1666,7 +1666,7 @@ public class BFSLauncher extends BFS {
                     }
                 }
             }
-            if (rc.onTheMap(l121)) {
+            if (rc.onTheMap(l121) && rc.senseMapInfo(l121).isPassable()) {
                 p121 = 10;
                 if (v109 > v108) {
                     if (v108 > v122) {
@@ -1706,7 +1706,7 @@ public class BFSLauncher extends BFS {
                     }
                 }
             }
-            if (rc.onTheMap(l125)) {
+            if (rc.onTheMap(l125) && rc.senseMapInfo(l125).isPassable()) {
                 p125 = 10;
                 if (v111 > v112) {
                     if (v112 > v124) {
@@ -1746,7 +1746,7 @@ public class BFSLauncher extends BFS {
                     }
                 }
             }
-            if (rc.onTheMap(l32)) {
+            if (rc.onTheMap(l32) && rc.senseMapInfo(l32).isPassable()) {
                 p32 = 10;
                 if (v45 > v44) {
                     if (v44 > v46) {
@@ -1766,7 +1766,7 @@ public class BFSLauncher extends BFS {
                     }
                 }
             }
-            if (rc.onTheMap(l80)) {
+            if (rc.onTheMap(l80) && rc.senseMapInfo(l80).isPassable()) {
                 p80 = 10;
                 if (v81 > v68) {
                     if (v68 > v94) {
@@ -1786,7 +1786,7 @@ public class BFSLauncher extends BFS {
                     }
                 }
             }
-            if (rc.onTheMap(l88)) {
+            if (rc.onTheMap(l88) && rc.senseMapInfo(l88).isPassable()) {
                 p88 = 10;
                 if (v87 > v74) {
                     if (v74 > v100) {
@@ -1806,7 +1806,7 @@ public class BFSLauncher extends BFS {
                     }
                 }
             }
-            if (rc.onTheMap(l136)) {
+            if (rc.onTheMap(l136) && rc.senseMapInfo(l136).isPassable()) {
                 p136 = 10;
                 if (v123 > v124) {
                     if (v124 > v122) {
@@ -1826,7 +1826,7 @@ public class BFSLauncher extends BFS {
                     }
                 }
             }
-            if (rc.onTheMap(l31)) {
+            if (rc.onTheMap(l31) && rc.senseMapInfo(l31).isPassable()) {
                 p31 = 10;
                 if (v45 > v44) {
                     if (v44 > v43) {
@@ -1866,7 +1866,7 @@ public class BFSLauncher extends BFS {
                     }
                 }
             }
-            if (rc.onTheMap(l33)) {
+            if (rc.onTheMap(l33) && rc.senseMapInfo(l33).isPassable()) {
                 p33 = 10;
                 if (v45 > v46) {
                     if (v46 > v47) {
@@ -1906,7 +1906,7 @@ public class BFSLauncher extends BFS {
                     }
                 }
             }
-            if (rc.onTheMap(l67)) {
+            if (rc.onTheMap(l67) && rc.senseMapInfo(l67).isPassable()) {
                 p67 = 10;
                 if (v81 > v68) {
                     if (v68 > v55) {
@@ -1946,7 +1946,7 @@ public class BFSLauncher extends BFS {
                     }
                 }
             }
-            if (rc.onTheMap(l75)) {
+            if (rc.onTheMap(l75) && rc.senseMapInfo(l75).isPassable()) {
                 p75 = 10;
                 if (v87 > v74) {
                     if (v74 > v61) {
@@ -1986,7 +1986,7 @@ public class BFSLauncher extends BFS {
                     }
                 }
             }
-            if (rc.onTheMap(l93)) {
+            if (rc.onTheMap(l93) && rc.senseMapInfo(l93).isPassable()) {
                 p93 = 10;
                 if (v81 > v94) {
                     if (v94 > v107) {
@@ -2026,7 +2026,7 @@ public class BFSLauncher extends BFS {
                     }
                 }
             }
-            if (rc.onTheMap(l101)) {
+            if (rc.onTheMap(l101) && rc.senseMapInfo(l101).isPassable()) {
                 p101 = 10;
                 if (v87 > v100) {
                     if (v100 > v113) {
@@ -2066,7 +2066,7 @@ public class BFSLauncher extends BFS {
                     }
                 }
             }
-            if (rc.onTheMap(l135)) {
+            if (rc.onTheMap(l135) && rc.senseMapInfo(l135).isPassable()) {
                 p135 = 10;
                 if (v123 > v122) {
                     if (v122 > v121) {
@@ -2106,7 +2106,7 @@ public class BFSLauncher extends BFS {
                     }
                 }
             }
-            if (rc.onTheMap(l137)) {
+            if (rc.onTheMap(l137) && rc.senseMapInfo(l137).isPassable()) {
                 p137 = 10;
                 if (v123 > v124) {
                     if (v124 > v125) {
@@ -2146,7 +2146,7 @@ public class BFSLauncher extends BFS {
                     }
                 }
             }
-            if (rc.onTheMap(l42)) {
+            if (rc.onTheMap(l42) && rc.senseMapInfo(l42).isPassable()) {
                 p42 = 10;
                 if (v56 > v43) {
                     if (v43 > v55) {
@@ -2166,7 +2166,7 @@ public class BFSLauncher extends BFS {
                     }
                 }
             }
-            if (rc.onTheMap(l48)) {
+            if (rc.onTheMap(l48) && rc.senseMapInfo(l48).isPassable()) {
                 p48 = 10;
                 if (v60 > v47) {
                     if (v47 > v61) {
@@ -2186,7 +2186,7 @@ public class BFSLauncher extends BFS {
                     }
                 }
             }
-            if (rc.onTheMap(l120)) {
+            if (rc.onTheMap(l120) && rc.senseMapInfo(l120).isPassable()) {
                 p120 = 10;
                 if (v108 > v121) {
                     if (v121 > v107) {
@@ -2206,7 +2206,7 @@ public class BFSLauncher extends BFS {
                     }
                 }
             }
-            if (rc.onTheMap(l126)) {
+            if (rc.onTheMap(l126) && rc.senseMapInfo(l126).isPassable()) {
                 p126 = 10;
                 if (v112 > v113) {
                     if (v113 > v125) {
@@ -2226,7 +2226,7 @@ public class BFSLauncher extends BFS {
                     }
                 }
             }
-            if (rc.onTheMap(l30)) {
+            if (rc.onTheMap(l30) && rc.senseMapInfo(l30).isPassable()) {
                 p30 = 10;
                 if (v44 > v43) {
                     if (v43 > v31) {
@@ -2266,7 +2266,7 @@ public class BFSLauncher extends BFS {
                     }
                 }
             }
-            if (rc.onTheMap(l34)) {
+            if (rc.onTheMap(l34) && rc.senseMapInfo(l34).isPassable()) {
                 p34 = 10;
                 if (v46 > v47) {
                     if (v47 > v33) {
@@ -2306,7 +2306,7 @@ public class BFSLauncher extends BFS {
                     }
                 }
             }
-            if (rc.onTheMap(l54)) {
+            if (rc.onTheMap(l54) && rc.senseMapInfo(l54).isPassable()) {
                 p54 = 10;
                 if (v68 > v55) {
                     if (v55 > v67) {
@@ -2346,7 +2346,7 @@ public class BFSLauncher extends BFS {
                     }
                 }
             }
-            if (rc.onTheMap(l62)) {
+            if (rc.onTheMap(l62) && rc.senseMapInfo(l62).isPassable()) {
                 p62 = 10;
                 if (v74 > v61) {
                     if (v61 > v75) {
@@ -2386,7 +2386,7 @@ public class BFSLauncher extends BFS {
                     }
                 }
             }
-            if (rc.onTheMap(l106)) {
+            if (rc.onTheMap(l106) && rc.senseMapInfo(l106).isPassable()) {
                 p106 = 10;
                 if (v94 > v107) {
                     if (v107 > v93) {
@@ -2426,7 +2426,7 @@ public class BFSLauncher extends BFS {
                     }
                 }
             }
-            if (rc.onTheMap(l114)) {
+            if (rc.onTheMap(l114) && rc.senseMapInfo(l114).isPassable()) {
                 p114 = 10;
                 if (v100 > v113) {
                     if (v113 > v101) {
@@ -2466,7 +2466,7 @@ public class BFSLauncher extends BFS {
                     }
                 }
             }
-            if (rc.onTheMap(l134)) {
+            if (rc.onTheMap(l134) && rc.senseMapInfo(l134).isPassable()) {
                 p134 = 10;
                 if (v122 > v121) {
                     if (v121 > v135) {
@@ -2506,7 +2506,7 @@ public class BFSLauncher extends BFS {
                     }
                 }
             }
-            if (rc.onTheMap(l138)) {
+            if (rc.onTheMap(l138) && rc.senseMapInfo(l138).isPassable()) {
                 p138 = 10;
                 if (v124 > v125) {
                     if (v125 > v137) {
