@@ -121,36 +121,27 @@ public class Explore {
 
     void reportIslands(){
         try{
-            visibleFreeIsland = false;
-            visibleEnemyOccupiedIsland = false;
-            closestFreeIsland = null;
-            closestEnemyOccupiedIsland = null;
-            distFreeIsland = 0;
-            distEnemyOccupiedIsland = 0;
+//            visibleFreeIsland = false;
+//            visibleEnemyOccupiedIsland = false;
+//            closestFreeIsland = null;
+//            closestEnemyOccupiedIsland = null;
+//            distFreeIsland = 0;
+//            distEnemyOccupiedIsland = 0;
 
             int[] ids = rc.senseNearbyIslands();
             for(int id: ids){
                 if(Clock.getBytecodeNum() > BYTECODE_EXPLORE_RESOURCE_LIMIT) break;
                 MapLocation[] islandLocs = rc.senseNearbyIslandLocations(id);
-                if(islandLocs.length > 0){
-                    Robot.comm.reportIsland(islandLocs[0]);
-                }
                 if(rc.senseTeamOccupyingIsland(id) == Team.NEUTRAL){
-                    visibleFreeIsland = true;
-                    if(compareFreeIslands){
-                        if(islandLocs.length > 0){
-                            closestFreeIsland = islandLocs[0];
-                            Robot.comm.reportIsland(closestFreeIsland);
-                        }
+//                    visibleFreeIsland = true;
+//                    if(compareFreeIslands){
+                    if(islandLocs.length > 0){
+                        closestFreeIsland = islandLocs[0];
+                        Robot.comm.reportIsland(islandLocs[0], id);
                     }
-                }else if(rc.senseTeamOccupyingIsland(id) == rc.getTeam().opponent()){
-                    visibleEnemyOccupiedIsland = true;
-                    if(compareEnemyOccupiedIslands){
-                        if(islandLocs.length > 0){
-                            closestEnemyOccupiedIsland = islandLocs[0];
-                            Robot.comm.reportIsland(closestEnemyOccupiedIsland);
-                        }
-                    }
+//                    }
+                }else{
+                    Robot.comm.clearIsland(id);
                 }
             }
         }catch(Exception e){

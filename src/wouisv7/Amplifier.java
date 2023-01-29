@@ -13,6 +13,7 @@ public class Amplifier extends Robot {
         super(rc);
     }
     void play(){
+        printIslands();
         memoryWells();
         moveToTarget();
     }
@@ -28,6 +29,16 @@ public class Amplifier extends Robot {
     MapLocation getTarget(){
         MapLocation loc = explore.getExploreTarget(false);
         return loc;
+    }
+
+    void printIslands(){
+        try{
+            for(int i = 0; i < 33; i++){
+                System.out.println(rc.readSharedArray(i));
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
     }
 
 
