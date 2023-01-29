@@ -60,12 +60,10 @@ public class Headquarters2 extends Robot {
 
     boolean tryBuildAnchor(){
         try {
-            if (rc.getNumAnchors(Anchor.STANDARD) < rc.getIslandCount()) {
-                if (rc.getRoundNum() > 1500 && rc.getResourceAmount(ResourceType.ADAMANTIUM) >= 80 && rc.getResourceAmount(ResourceType.MANA) >= 80) {
-                    rc.buildAnchor(Anchor.STANDARD);
-                    //System.out.println("MADE ANCHOR");
-                    return true;
-                }
+            if (rc.getRoundNum() > 400 && rc.getResourceAmount(ResourceType.ADAMANTIUM) >= 80 && rc.getResourceAmount(ResourceType.MANA) >= 120) {
+                rc.buildAnchor(Anchor.STANDARD);
+                //System.out.println("MADE ANCHOR");
+                return true;
             }
             return false;
         }catch(Exception e){
