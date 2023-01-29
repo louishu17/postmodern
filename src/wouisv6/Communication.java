@@ -99,21 +99,21 @@ public class Communication {
                 }
             }
             int j = -1;
-            while(j++ < 4) {
-                if(rc.readSharedArray(j * 2) == 0) { //if well queue is empty
-                    rc.writeSharedArray(j * 2, Util.encodeLoc(wellLoc));
-                    rc.writeSharedArray(j * 2 + 1, shortestDist);
+            while(j++ < 3) {
+                if(rc.readSharedArray(j * 2 + 38) == 0) { //if well queue is empty
+                    rc.writeSharedArray(j * 2 + 38, Util.encodeLoc(wellLoc));
+                    rc.writeSharedArray(j * 2 + 39, shortestDist);
                     return;
                 }
             }
             int k = -1;
             int indexToBeReplaced = -1;
             int longestDist = 0;
-            while(k++ < 4) {
-                int currentDist = rc.readSharedArray(k * 2 + 1);
+            while(k++ < 3) {
+                int currentDist = rc.readSharedArray(k * 2 + 39);
                 if(currentDist > longestDist) {
                     longestDist = currentDist; //greatest distance out of known wells
-                    indexToBeReplaced = k * 2;
+                    indexToBeReplaced = k * 2 + 38;
                 }
             }
             if(shortestDist < longestDist) { //if well is closer than the farthest known well, replaces it in the queue
@@ -142,21 +142,21 @@ public class Communication {
                 }
             }
             int j = -1;
-            while(j++ < 4) {
-                if(rc.readSharedArray(j * 2 + 10) == 0) { //if well queue is empty
-                    rc.writeSharedArray(j * 2 + 10, Util.encodeLoc(wellLoc));
-                    rc.writeSharedArray(j * 2 + 11, shortestDist);
+            while(j++ < 3) {
+                if(rc.readSharedArray(j * 2 + 46) == 0) { //if well queue is empty
+                    rc.writeSharedArray(j * 2 + 46, Util.encodeLoc(wellLoc));
+                    rc.writeSharedArray(j * 2 + 47, shortestDist);
                     break;
                 }
             }
             int k = -1;
             int indexToBeReplaced = -1;
             int longestDist = 0;
-            while(k++ < 4) {
-                int currentDist = rc.readSharedArray(k * 2 + 11);
+            while(k++ < 3) {
+                int currentDist = rc.readSharedArray(k * 2 + 47);
                 if(currentDist > longestDist) {
                     longestDist = currentDist; //greatest distance out of known wells
-                    indexToBeReplaced = k * 2 + 10;
+                    indexToBeReplaced = k * 2 + 46;
                 }
             }
             if(shortestDist < longestDist) { //if well is closer than the farthest known well, replaces it in the queue
