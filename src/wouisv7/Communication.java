@@ -456,7 +456,7 @@ public class Communication {
         int i = -1;
         MapLocation myLoc = rc.getLocation();
         int closestDist = 10000;
-        int indexToBeReturned = -1; //returns -1 if no islands in the array
+        int indexToBeReturned = 35; //returns 35 if no islands in the array
         while(i++ < 33) {
             if(rc.readSharedArray(i) != 0) {
                 int currentDist = myLoc.distanceSquaredTo(Util.getLocation(rc.readSharedArray(i)));
@@ -468,5 +468,4 @@ public class Communication {
         }
         rc.writeSharedArray(HEADQUARTER_INDEX + 34, indexToBeReturned);
     }
-
 }
