@@ -1,13 +1,19 @@
 package wouisv5;
 
-import battlecode.common.MapLocation;
-import battlecode.common.RobotController;
+import battlecode.common.*;
+
+import java.util.HashSet;
 
 public class Amplifier extends Robot {
+    HashSet<Integer> oldAdWells = new HashSet<>();
+    HashSet<Integer> newAdWells = new HashSet<>();
+    HashSet<Integer> oldManaWells = new HashSet<>();
+    HashSet<Integer> newManaWells = new HashSet<>();
     Amplifier(RobotController rc){
         super(rc);
     }
     void play(){
+        memoryWells();
         moveToTarget();
     }
 
@@ -20,8 +26,49 @@ public class Amplifier extends Robot {
     }
 
     MapLocation getTarget(){
-        MapLocation loc = comm.getClosestEnemyHeadquarters();
-        if(loc == null) loc = explore.getExploreTarget(false);
+        MapLocation loc = explore.getExploreTarget(false);
         return loc;
+    }
+
+
+    void memoryWells(){
+        try {
+            rememberWells();
+            if(rc.canWriteSharedArray(20,20) && newAdWells.size() != 0 && newManaWells.size() != 0) { //everytime it gets within writing distance of the headquarters
+                Integer[] adWells = newAdWells.toArray(new Integer[newAdWells.size()]);
+                comm.reportAdamantium(adWells);
+                Integer[] manaWells = newManaWells.toArray(new Integer[newManaWells.size()]);
+                comm.reportMana(manaWells);
+                for(Integer adWell: newAdWells) {
+                    oldAdWells.add(adWell);
+                }
+                for(Integer manaWell: newManaWells) {
+                    oldManaWells.add(manaWell);
+                }
+                newAdWells.clear();
+                oldAdWells.clear();
+            }
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    /**
+     * Stores an active set of new wells seen.
+     * Already seen wells are not added.
+     * @throws GameActionException
+     */
+    void rememberWells() throws GameActionException {
+        WellInfo[] wells = rc.senseNearbyWells();
+        for(WellInfo well : wells) {
+            Integer codeLoc = Util.encodeLoc(well.getMapLocation());
+            if(well.getResourceType() == ResourceType.ADAMANTIUM && !oldAdWells.contains(codeLoc)) {
+                newAdWells.add(codeLoc);
+            }
+            if(well.getResourceType() == ResourceType.MANA && !oldManaWells.contains(codeLoc)) {
+                newManaWells.add(codeLoc);
+            }
+        }
     }
 }

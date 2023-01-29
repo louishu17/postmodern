@@ -49,8 +49,8 @@ public class Headquarters2 extends Robot {
 
         if(tryBuildAnchor()) return;
         if(tryBuildAmplifier()) return;
-        if(tryBuildCarrier()) return;
         if(tryBuildLauncher()) return;
+        if(tryBuildCarrier()) return;
     }
 
     boolean tryBuildAnchor(){
@@ -69,6 +69,9 @@ public class Headquarters2 extends Robot {
         return false;
     }
     boolean tryBuildLauncher(){
+        if(rc.getResourceAmount(ResourceType.MANA) < 45){
+            return false;
+        }
         if (constructRobotGreedy(RobotType.LAUNCHER, comm.getClosestEnemyHeadquarters())){
 //            comm.reportBuilt(RobotType.LAUNCHER, updateLauncherScore(launcherScore));
             return true;
@@ -77,6 +80,9 @@ public class Headquarters2 extends Robot {
     }
 
     boolean tryBuildCarrier(){
+        if(rc.getResourceAmount(ResourceType.ADAMANTIUM) < 50){
+            return false;
+        }
         if(rc.getResourceAmount(ResourceType.ADAMANTIUM) >= Constants.MIN_ADAMANTIUM_STOP_MINERS && rc.getResourceAmount(ResourceType.MANA) >= Constants.MIN_MANA_STOP_MINERS){
 //            if(carrierScore <= launcherScore){
 //                comm.reportBuilt(RobotType.CARRIER, updateCarrierScore(carrierScore));
@@ -101,7 +107,7 @@ public class Headquarters2 extends Robot {
 
     boolean tryBuildAmplifier(){
         if(builtAmplifier) return false;
-        if (rc.getRoundNum() < 5 || rc.getResourceAmount(ResourceType.MANA) < 60 || rc.getResourceAmount(ResourceType.ADAMANTIUM) < 80) return false;
+        if (rc.getRoundNum() < 5 || rc.getResourceAmount(ResourceType.MANA) < 30 || rc.getResourceAmount(ResourceType.ADAMANTIUM) < 80) return false;
 
         if (constructRobotGreedy(RobotType.AMPLIFIER, null)) {
             builtAmplifier = true;

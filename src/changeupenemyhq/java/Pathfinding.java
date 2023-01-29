@@ -1,4 +1,4 @@
-package wouisv5;
+package changeupenemyhq.java;
 
 
 import battlecode.common.Direction;
@@ -92,11 +92,11 @@ public class Pathfinding {
                 for (int i = 0; i < 8; i++) {
                     MapLocation newLoc = myLoc.add(dir);
                     Direction currentDir = Direction.CENTER;
-                    if(rc.onTheMap(newLoc) && rc.canSenseLocation(newLoc)){
+                    if(rc.onTheMap(newLoc)){
                         currentDir = rc.senseMapInfo(newLoc).getCurrentDirection();
                     }
                     if (canMove(dir) && rc.onTheMap(newLoc) && checkCurrent(dir,currentDir)) {
-                        //rc.setIndicatorString("MOVING TOWARD " + dir);
+                        rc.setIndicatorString("MOVING TOWARD " + dir);
                         rc.move(dir);
                         return true;
                     }

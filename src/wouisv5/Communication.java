@@ -37,6 +37,8 @@ public class Communication {
     int verticalSymmetry;
     int rotationSymmetry;
 
+    MapLocation curEnemyHQTarget;
+
 
     Communication(RobotController rc) {
         this.rc = rc;
@@ -181,11 +183,13 @@ public class Communication {
         return new MapLocation(mapWidth - loc.x - 1, mapHeight - loc.y - 1);
     }
 
-    MapLocation getClosestEnemyHeadquarters(){
+    void getClosestEnemyHeadquarters(){
         try {
+//                System.out.println("FINDING NEW ENEMY HQ...");
+//                System.out.println("CURRENT ENEMY HQ TARGET: " + curEnemyHQTarget);
+            MapLocation tempEnemyHQTarget = curEnemyHQTarget;
             MapLocation myLoc = rc.getLocation();
-            MapLocation ans = null;
-            int bestDist = 0;
+            int bestDist = 10000;
             int hSym = 0;
             if(horizontalSymmetry != 0){
                 hSym = horizontalSymmetry;
@@ -215,6 +219,7 @@ public class Communication {
             int i = rc.readSharedArray(HEADQUARTERS_NB_INDEX);
             while (i-- > 0){
                 MapLocation newLoc = Util.getLocation(rc.readSharedArray(HEADQUARTERS_LOC_INDEX + i));
+//                    System.out.println("CONSIDERING SYMMETRIES FROM: " + newLoc);
                 if ((hSym&1) == 0 && (hSym & (1 << (i+1))) == 0){
                     MapLocation symLoc = getHSym(newLoc);
                     if (rc.canSenseLocation(symLoc)){
@@ -228,10 +233,13 @@ public class Communication {
                             }
                         }
                     }
-                    int d = myLoc.distanceSquaredTo(symLoc);
-                    if (ans == null || bestDist > d){
-                        bestDist = d;
-                        ans = symLoc;
+                    if(!symLoc.equals(curEnemyHQTarget)){
+                        int d = myLoc.distanceSquaredTo(symLoc);
+                        if (bestDist > d){
+                            bestDist = d;
+                            tempEnemyHQTarget = symLoc;
+                        }
+//                            System.out.println("CONSIDERING: "+ symLoc);
                     }
                 }
                 if ((vSym&1) == 0 && (vSym & (1 << (i+1))) == 0){
@@ -243,14 +251,17 @@ public class Communication {
                             updatev = true;
                             if (updateSymmetries){
                                 vSym += 1;
-                                System.out.println("Not Vertical!");
+//                                    System.out.println("Not Vertical!");
                             }
                         }
                     }
-                    int d = myLoc.distanceSquaredTo(symLoc);
-                    if (ans == null || bestDist > d){
-                        bestDist = d;
-                        ans = symLoc;
+                    if(!symLoc.equals(curEnemyHQTarget)){
+                        int d = myLoc.distanceSquaredTo(symLoc);
+                        if (bestDist > d){
+                            bestDist = d;
+                            tempEnemyHQTarget = symLoc;
+                        }
+//                            System.out.println("CONSIDERING: "+ symLoc);
                     }
                 }if ((rSym&1) == 0 && (rSym & (1 << (i+1))) == 0){
                     MapLocation symLoc = getRSym(newLoc);
@@ -265,10 +276,13 @@ public class Communication {
                             }
                         }
                     }
-                    int d = myLoc.distanceSquaredTo(symLoc);
-                    if (ans == null || bestDist > d){
-                        bestDist = d;
-                        ans = symLoc;
+                    if(!symLoc.equals(curEnemyHQTarget)){
+                        int d = myLoc.distanceSquaredTo(symLoc);
+                        if (bestDist > d){
+                            bestDist = d;
+                            tempEnemyHQTarget = symLoc;
+                        }
+//                            System.out.println("CONSIDERING: "+ symLoc);
                     }
                 }
             }
@@ -284,12 +298,11 @@ public class Communication {
                 if(rc.canWriteSharedArray(R_SYM, rSym)) rc.writeSharedArray(R_SYM, rSym);
                 rotationSymmetry = rSym;
             }
-            return ans;
+            curEnemyHQTarget = tempEnemyHQTarget;
+//                System.out.println("NEW ENEMY HQ TARGET: " + curEnemyHQTarget);
         } catch (Exception e){
             e.printStackTrace();
         }
-        return null;
-
     }
     MapLocation getClosestAllyHeadquarter(){
         MapLocation ans = null;
@@ -388,8 +401,8 @@ public class Communication {
     void activateDanger(){
         try{
             int carrierScore = getBuildingScore(RobotType.CARRIER);
-            if (carrierScore <= Util.getMinMiners()) {
-                rc.writeSharedArray(BUILDING_QUEUE_INDEX + RobotType.CARRIER.ordinal(), Util.getMinMiners() + 1);
+            if (carrierScore <= Util.getMinCarriers()) {
+                rc.writeSharedArray(BUILDING_QUEUE_INDEX + RobotType.CARRIER.ordinal(), Util.getMinCarriers() + 1);
             }
         }catch(Exception e){
             e.printStackTrace();

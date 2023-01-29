@@ -1,4 +1,4 @@
-package wouisv5;
+package changeupenemyhq.java;
 
 import battlecode.common.MapLocation;
 import battlecode.common.RobotType;

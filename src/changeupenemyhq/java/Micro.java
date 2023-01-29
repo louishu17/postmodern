@@ -1,10 +1,10 @@
-package wouids.louisv3;
+package changeupenemyhq.java;
 
 import battlecode.common.RobotController;
 
 public abstract class Micro {
     RobotController rc;
-    static final int MAX_MICRO_BYTECODE = 4000;
+    static final int MAX_MICRO_BYTECODE = 2000;
 
     Micro(RobotController rc){
         this.rc = rc;

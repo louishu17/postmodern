@@ -1,4 +1,4 @@
-package wouisv5;
+package changeupenemyhq.java;
 
 import battlecode.common.*;
 
@@ -42,14 +42,16 @@ public class Carrier extends Robot {
         }
     }
     void play(){
-        if(goingForMana)
-        {
-            rc.setIndicatorString("MANA COLLECTOR");
-        }else{
-            rc.setIndicatorString("ADAMANTIUM COLLECTOR");
-        }
+//        if(goingForMana)
+//        {
+//            rc.setIndicatorString("MANA COLLECTOR");
+//        }else{
+//            rc.setIndicatorString("ADAMANTIUM COLLECTOR");
+//        }
 
-        memoryWells();
+        if(rc.getRoundNum() <= 2000) { //well queue only actively expanding in first 60 rounds
+            memoryWells();
+        }
         if(getTotalResources() > 0){
             tryAttack(true);
         }
@@ -94,7 +96,7 @@ public class Carrier extends Robot {
         if(checkIfNextToWell(loc)){
             return;
         }
-//        rc.setIndicatorLine(rc.getLocation(),loc,0,0,255);
+        rc.setIndicatorLine(rc.getLocation(),loc,0,0,255);
         while(rc.isMovementReady()){
             bfs.move(loc);
         }
@@ -106,11 +108,12 @@ public class Carrier extends Robot {
         try{
             if(rc.getAnchor() != null){
                 loc = explore.getClosestFreeIsland();
+                if(loc != null) rc.setIndicatorString("HAVE AN ISLAND IN MIND: " + loc);
                 if(loc == null) return explore.getExploreTarget(false);
             }else{
                 if(totalResources == GameConstants.CARRIER_CAPACITY){
                     loc = comm.getClosestAllyHeadquarter();
-                    //rc.setIndicatorString("HAVE A HQ IN MIND: " + loc);
+                    rc.setIndicatorString("HAVE A HQ IN MIND: " + loc);
                 }
                 else
                 {
@@ -126,7 +129,7 @@ public class Carrier extends Robot {
                     if (loc == null){
                         return explore.getExploreTarget(false);
                     }else{
-                        //rc.setIndicatorString("HAVE A WELL IN MIND: " + loc);
+                        rc.setIndicatorString("HAVE A WELL IN MIND: " + loc);
                     }
                 }
             }
