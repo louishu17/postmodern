@@ -110,7 +110,7 @@ public class Communication {
                 if(rc.readSharedArray(j * 2) == 0) { //if well queue is empty
                     rc.writeSharedArray(j * 2, Util.encodeLoc(wellLoc));
                     rc.writeSharedArray(j * 2 + 1, shortestDist);
-                    break;
+                    return;
                 }
             }
             int k = -1;
