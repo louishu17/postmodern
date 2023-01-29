@@ -21,6 +21,7 @@ public abstract class Robot {
     static Communication comm;
 
     static boolean isCarrier = false;
+    static boolean isAmplifier = false;
 
 
     public Robot(RobotController rc){
@@ -29,6 +30,7 @@ public abstract class Robot {
         explore = new Explore(rc);
         comm = new Communication(rc);
         if(rc.getType() == RobotType.CARRIER) isCarrier = true;
+        if(rc.getType() == RobotType.AMPLIFIER) isAmplifier = true;
     }
 
     abstract void play();
@@ -45,7 +47,7 @@ public abstract class Robot {
     }
     void endTurn(){
         if(!isCarrier) explore.reportResources();
-        explore.reportIslands();
+        if(isAmplifier) explore.reportIslands();
         explore.reportUnits();
     }
 
