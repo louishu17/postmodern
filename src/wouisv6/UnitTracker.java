@@ -1,4 +1,4 @@
-package wouisv5;
+package wouisv6;
 
 import battlecode.common.ResourceType;
 import battlecode.common.RobotController;

@@ -1,4 +1,4 @@
-package wouisv5;
+package wouisv6;
 
 import battlecode.common.*;
 
@@ -72,10 +72,7 @@ public class Headquarters2 extends Robot {
         if(rc.getResourceAmount(ResourceType.MANA) < 45){
             return false;
         }
-        if(comm.curEnemyHQTarget == null){
-            comm.getClosestEnemyHeadquarters();
-        }
-        if (constructRobotGreedy(RobotType.LAUNCHER, comm.curEnemyHQTarget)){
+        if (constructRobotGreedy(RobotType.LAUNCHER, comm.getClosestEnemyHeadquarters())){
 //            comm.reportBuilt(RobotType.LAUNCHER, updateLauncherScore(launcherScore));
             return true;
         }
@@ -157,7 +154,7 @@ public class Headquarters2 extends Robot {
         try{
             RobotInfo[] enemies = rc.senseNearbyRobots(rc.getLocation(), rc.getType().visionRadiusSquared, rc.getTeam().opponent());
             for (RobotInfo enemy : enemies){
-                if (!Util.isAttacker(enemy.getType())) continue;
+                if (!wouids.louisv3.Util.isAttacker(enemy.getType())) continue;
                 int d = enemy.getLocation().distanceSquaredTo(myLoc);
                 if (closestEnemy == null || d < closestDist){
                     closestEnemy = enemy.location;
