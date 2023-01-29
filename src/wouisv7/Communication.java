@@ -14,6 +14,8 @@ public class Communication {
 //    static final int HEADQUARTERS_CARRIERS_MADE = 40;
 //    static final int BUILDING_QUEUE_INDEX = 54;
 
+    int HEADQUARTER_INDEX = -1;
+
     static final int LAUNCHER_COUNT = 59;
     static final int CARRIER_COUNT = 60;
 
@@ -60,6 +62,7 @@ public class Communication {
                 if(rc.readSharedArray(HEADQUARTERS_LOC_INDEX + i) == 0) {
 //                    System.out.println("WROTE TO: " + (HEADQUARTERS_LOC_INDEX + i));
                     rc.writeSharedArray(HEADQUARTERS_LOC_INDEX + i, Util.encodeLoc(rc.getLocation()));
+                    HEADQUARTER_INDEX = i;
                     break;
                 }
             }
