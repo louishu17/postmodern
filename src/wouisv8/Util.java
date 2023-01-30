@@ -1,0 +1,35 @@
+package wouisv8;
+
+import battlecode.common.MapLocation;
+import battlecode.common.RobotType;
+
+public class Util {
+    static int encodeLoc(MapLocation loc){
+        return (loc.x << 6) | loc.y;
+    }
+
+    static MapLocation getLocation(int code){
+        return new MapLocation(code >>> 6, code & 63);
+    }
+
+    static boolean isAttacker(RobotType r){
+        switch (r){
+            case LAUNCHER:
+            case DESTABILIZER: return true;
+            default: return false;
+        }
+    }
+
+    static boolean hurt(int h){
+        return h < Constants.CRITICAL_HEALTH;
+    }
+
+    static Integer minCarriers = null;
+
+    static int getMinCarriers(){
+        if (minCarriers != null) return minCarriers;
+        minCarriers = (Robot.rc.getMapHeight()* Robot.rc.getMapWidth())/200;
+        if(minCarriers > Constants.INITIAL_CARRIERS) minCarriers = Constants.INITIAL_CARRIERS;
+        return minCarriers;
+    }
+}

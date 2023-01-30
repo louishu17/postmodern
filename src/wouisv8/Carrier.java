@@ -1,4 +1,4 @@
-package wouisv7;
+package wouisv8;
 
 import battlecode.common.*;
 
